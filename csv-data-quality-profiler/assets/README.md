@@ -31,7 +31,7 @@ use the csv-data-quality-profiler skill on the following data
 
 ```
 use the csv-data-quality-profiler skill on the following data
-/home/bandaru/Downloads/archive/Smartphone_Usage_Productivity_Dataset_50000.csv
+assets/employees_messy.csv
 ```
 
 ### Direct script usage (optional)
