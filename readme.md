@@ -7,6 +7,26 @@ Use this guide to:
 - Copy the cloned skill folder into your OpenClaw skills workspace
 
 ---
+
+## List of Skills
+
+### 1) Skill Name
+`report_generatror`
+
+### Why it is used
+- Used to generate structured, interactive HTML analytics reports using the MuSigma canonical template.
+- Useful for EDA summaries, business analytics reports, decision science reports, and dataset-based insights.
+
+### Prerequisites for this skill
+- OpenClaw skills directory available at `~/.openclaw/workspace/skills`
+- Access to the skill files in `report_generatror/`
+- Template files available:
+	- `report_generatror/assets/template.html`
+	- `report_generatror/references/template-guide.md`
+- Data source available for report creation (CSV/Excel/JSON, etc.)
+
+---
+
 ## Prerequisites
 
 Before you begin, make sure you have:
@@ -39,13 +59,13 @@ cd <YOUR_PREFERRED_PATH>
 3. Clone the repository:
 
 ```bash
-git clone https://github.com/mudigitalemployee-tech/claw-skill
+git clone https://gitlab.ird.mu-sigma.com/digital-employee/skill-repository/openclaw_skill.git
 ```
 
 4. Enter the cloned folder:
 
 ```bash
-cd claw-skill
+cd openclaw_skill
 ```
 
 5. Confirm files are present:
@@ -73,13 +93,13 @@ From inside your cloned repository, copy each skill folder (a skill folder usual
 Example (single skill folder):
 
 ```bash
-cp -r musigma-html-report-generator ~/.openclaw/workspace/skills/
+cp -r report_generatror ~/.openclaw/workspace/skills/
 ```
 
 Example (single skill folder using relative path from repo root):
 
 ```bash
-cp -r ./musigma-html-report-generator ~/.openclaw/workspace/skills/
+cp -r ./report_generatror ~/.openclaw/workspace/skills/
 ```
 
 Example (multiple skill folders):
@@ -110,13 +130,13 @@ ls ~/.openclaw/workspace/skills
 
 You should see:
 
-- `musigma-html-report-generator` (if you used Option A)
+- `report_generatror` (if you used Option A)
 - or `claw-skill` (if you used Option B)
 
 For deeper verification:
 
 ```bash
-ls ~/.openclaw/workspace/skills/musigma-html-report-generator
+ls ~/.openclaw/workspace/skills/report_generatror
 ```
 
 Expected structure includes:
@@ -132,7 +152,7 @@ Expected structure includes:
 If you make updates in this repository later, copy again to refresh the installed skill:
 
 ```bash
-cp -r musigma-html-report-generator ~/.openclaw/workspace/skills/
+cp -r report_generatror ~/.openclaw/workspace/skills/
 ```
 
 If prompted to overwrite, confirm as needed.
@@ -166,8 +186,8 @@ If clone fails, verify your repository URL and access permissions.
 Use the following commands:
 
 ```bash
-git clone https://github.com/mudigitalemployee-tech/claw-skill
-cd claw-skill
-cp -r musigma-html-report-generator ~/.openclaw/workspace/skills/
+git clone https://gitlab.ird.mu-sigma.com/digital-employee/skill-repository/openclaw_skill.git
+cd openclaw_skill
+cp -r report_generatror ~/.openclaw/workspace/skills/
 ls ~/.openclaw/workspace/skills
 ```
