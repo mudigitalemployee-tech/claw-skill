@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<!--
+  MuSigma Canonical HTML Report Template
+  =======================================
+  DEFAULT template for all report-generation tasks.
+  Based on EDA Panel Data R Markdown styling.
+  Created: 2026-03-09 | Last Updated: 2026-03-10
+
+  INSTRUCTIONS:
+  - Replace all {{PLACEHOLDER}} values with actual content
+  - Add/remove .section.level2 and .section.level3 divs as needed
+  - Each section MUST have a unique id on its div (used by TOC)
+  - Charts: use Plotly.js with professional palette P=["#4E79A7","#59A14F","#F28E2B","#E15759","#BAB0AC"]
+  - Tables: use <table> with <thead>/<tbody> (styled automatically)
+  - NO alert boxes — use plain <p> with <strong> for callouts
+  - Headings are auto-numbered: h2 → 1, 2, 3… / h3 → 1.1, 1.2, 2.1…
+  - TOC is auto-generated from h2/h3 headings — no manual TOC needed
+  - This file is 100% self-contained (no external dependencies except CDNs)
+-->
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>{{REPORT_TITLE}}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+<style type="text/css">
+/* ===== Base Layout (matching R Markdown output) ===== */
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.42857;
+  color: #333;
+  background: #fff;
+  counter-reset: h2counter;
+}
+
+div.container-fluid.main-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== TOC Sidebar ===== */
+#TOC {
+  position: fixed;
+  top: 0;
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: auto;
+  overflow-y: auto;
+  margin: 25px 0 20px 0;
+  padding: 0;
+  background: #fff;
+  z-index: 1000;
+}
+
+#TOC ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+#TOC .tocify-subheader {
+  display: none;
+}
+
+#TOC .list-group-item {
+  display: block;
+  padding: 4px 15px;
+  line-height: 30px;
+  border: 0;
+  border-radius: 0;
+  background-color: inherit;
+  color: #000;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  position: relative;
+}
+
+#TOC .tocify-subheader .list-group-item {
+  padding-left: 25px;
+  font-size: 12.6px;
+}
+
+#TOC .tocify-subheader .tocify-subheader .list-group-item {
+  padding-left: 35px;
+  font-size: 11.9px;
+}
+
+#TOC .list-group-item:hover {
+  background-color: #f5f5f5;
+  text-decoration: none;
+}
+
+#TOC .list-group-item.active,
+#TOC .list-group-item.active:hover,
+#TOC .list-group-item.active:focus {
+  color: #fff;
+  background-color: #337ab7;
+  border-color: #337ab7;
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+/* ===== Auto-numbered Headings ===== */
+.toc-content { counter-reset: h2counter; }
+
+.toc-content h2 {
+  font-size: 30px;
+  font-weight: 400;
+  color: #333;
+  margin-top: 30px;
+  counter-increment: h2counter;
+  counter-reset: h3counter;
+}
+
+.toc-content h2::before {
+  content: counter(h2counter) ". ";
+  font-weight: 500;
+}
+
+.toc-content h3 {
+  font-size: 24px;
+  font-weight: 400;
+  color: #333;
+  margin-top: 22px;
+  counter-increment: h3counter;
+}
+
+.toc-content h3::before {
+  content: counter(h2counter) "." counter(h3counter) " ";
+  font-weight: 500;
+}
+
+/* Exclude header title from numbering */
+.report-header ~ h1,
+.report-header ~ h2 { /* handled by counter */ }
+
+h1.title { font-size: 38px; color: #800000; margin-top: 0; }
+h1 { font-size: 34px; }
+h4, .h4 { font-size: 18px; }
+
+/* ===== Sections ===== */
+.section.level2 { margin-top: 20px; }
+.section.level3 { margin-top: 14px; }
+
+/* ===== Tables ===== */
+table { margin: 14px auto; border-collapse: collapse; border: none; font-size: 12px; color: #000; }
+thead { border-bottom: 1px solid #000; vertical-align: bottom; }
+tr, th, td { text-align: right; vertical-align: middle; padding: 0.5em 0.8em; border: none; }
+th { font-weight: bold; }
+td:first-child, th:first-child { text-align: left; }
+tbody tr:nth-child(odd) { background: #f5f5f5; }
+tbody tr:hover { background: rgba(66,165,245,0.15); }
+
+/* ===== Charts ===== */
+.chart-container { margin: 15px 0; width: 100%; }
+
+/* ===== Header ===== */
+.report-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 0 18px 0;
+  margin-bottom: 20px;
+}
+.report-header .logo { flex: 0 0 120px; }
+.report-header .logo img { height: 90px; }
+.report-header .title-block { flex: 1; text-align: center; }
+.report-header .title-block .title-text { font-size: 32px; font-weight: 500; color: #800000; }
+.report-header .title-block .author-date { font-size: 18px; color: #666; margin-top: 4px; }
+.report-header .spacer { flex: 0 0 120px; }
+
+/* ===== Print ===== */
+@media print {
+  #TOC { display: none; }
+  .col-sm-8 { width: 100%; }
+  .toc-content { padding-left: 0; padding-right: 0; }
+}
+</style>
+</head>
+
+<body>
+<div class="container-fluid main-container">
+<div class="row">
+
+<!-- TOC Sidebar (auto-populated by inline script) -->
+<div class="col-xs-12 col-sm-4 col-md-3">
+  <div id="TOC"></div>
+</div>
+
+<!-- Main Content -->
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+<!-- Header -->
+<div class="report-header">
+  <div class="logo">
+    <img src="http://upload.wikimedia.org/wikipedia/en/0/0c/Mu_Sigma_Logo.jpg" alt="Mu Sigma"/>
+  </div>
+  <div class="title-block">
+    <div class="title-text">{{REPORT_TITLE}}</div>
+    <!-- VERSION must follow YY.MM.VV format (e.g., 26.03.01). DATE must be system date. -->
+    <div class="author-date"><b>Author(s):</b> {{AUTHOR}} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Version:</b> {{VERSION_YY.MM.VV}} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Date:</b> {{SYSTEM_DATE}}</div>
+  </div>
+  <div class="spacer"></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTIONS — Add/remove as needed. Each needs:                  -->
+<!--   - Unique id on the .section div                             -->
+<!--   - h2 for level2, h3 for level3                              -->
+<!--   - Headings auto-number: h2 → 1, 2, 3 / h3 → 1.1, 1.2      -->
+<!--   - NO alert boxes — use plain <p><strong> for callouts       -->
+<!--   - TOC auto-generates from these headings                    -->
+<!-- ============================================================ -->
+
+<!-- Section 1: Executive Summary -->
+<div id="executive-summary" class="section level2">
+<h2>Executive Summary</h2>
+<p>{{EXECUTIVE_SUMMARY}}</p>
+<p><strong>Critical Finding:</strong> {{CRITICAL_FINDING}}</p>
+</div>
+
+<!-- Section 2: Example with subsections and chart -->
+<div id="section-two" class="section level2">
+<h2>{{SECTION_2_TITLE}}</h2>
+<p>{{SECTION_2_INTRO}}</p>
+
+<div id="subsection-2-1" class="section level3">
+<h3>{{SUBSECTION_2_1_TITLE}}</h3>
+<p>{{SUBSECTION_2_1_CONTENT}}</p>
+<div class="chart-container" id="chart-1"></div>
+</div>
+
+<div id="subsection-2-2" class="section level3">
+<h3>{{SUBSECTION_2_2_TITLE}}</h3>
+<table>
+<thead><tr><th>{{COL1}}</th><th>{{COL2}}</th><th>{{COL3}}</th></tr></thead>
+<tbody>
+<tr><td>{{ROW1_COL1}}</td><td>{{ROW1_COL2}}</td><td>{{ROW1_COL3}}</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Section 3: Recommendations (example) -->
+<div id="recommendations" class="section level2">
+<h2>Recommendations</h2>
+<table>
+<thead><tr><th>#</th><th>Priority</th><th>Recommendation</th><th>Rationale</th><th>Expected Impact</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>P0</strong></td><td>{{REC_1}}</td><td>{{REC_1_RATIONALE}}</td><td>{{REC_1_IMPACT}}</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- Section 4: Conclusion -->
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>{{CONCLUSION}}</p>
+<p><strong>Next Step:</strong> {{NEXT_STEP}}</p>
+</div>
+
+</div><!-- /toc-content -->
+</div><!-- /row -->
+</div><!-- /main-container -->
+
+<!-- ============================================================ -->
+<!-- PLOTLY CHARTS                                                 -->
+<!-- Professional Palette:                                         -->
+<!--   P=["#4E79A7","#59A14F","#F28E2B","#E15759","#BAB0AC"]         -->
+<!--   Primary, Secondary, Highlight, Negative, Neutral            -->
+<!-- Default height: H=370                                         -->
+<!-- ============================================================ -->
+<script>
+var P=["#4E79A7","#59A14F","#F28E2B","#E15759","#BAB0AC"], H=370;
+var L={font:{family:'"Helvetica Neue",Helvetica,Arial,sans-serif',size:11},paper_bgcolor:'#FFFFFF',plot_bgcolor:'#FFFFFF',margin:{t:50,b:60,l:60,r:30},xaxis:{gridcolor:'#E5E5E5'},yaxis:{gridcolor:'#E5E5E5'}};
+
+// Example chart — replace with actual data
+// Plotly.newPlot('chart-1', [{...}], $.extend(!0,{},L,{...}), {responsive:true});
+</script>
+
+<!-- ============================================================ -->
+<!-- INLINE TOC BUILDER                                            -->
+<!-- Auto-generates sidebar TOC from h2/h3 headings                -->
+<!-- Collapsible subheaders, scroll highlight, smooth transitions  -->
+<!-- Numbers in TOC match CSS counter numbers on headings          -->
+<!-- ============================================================ -->
+<script>
+$(document).ready(function() {
+  var $toc = $('#TOC');
+  var $content = $('.toc-content');
+  var headers = [];
+  var headerIdCounter = 0;
+
+  // Collect headings
+  $content.find('h2, h3').each(function() {
+    var $h = $(this);
+    var level = this.tagName === 'H2' ? 2 : 3;
+    var id = $h.attr('id');
+    if (!id) {
+      var $parent = $h.closest('.section[id]');
+      if ($parent.length) id = $parent.attr('id');
+    }
+    if (!id) {
+      id = 'section-' + headerIdCounter;
+      $h.attr('id', id);
+    }
+    headerIdCounter++;
+    headers.push({ text: $h.text().trim(), id: id, level: level, el: $h });
+  });
+
+  if (!headers.length) return;
+
+  // Build numbered TOC labels to match CSS counters
+  var h2n = 0, h3n = 0;
+  var html = '';
+  var inHeader = false;
+  var inSub = false;
+  var hIdx = 0;
+
+  for (var i = 0; i < headers.length; i++) {
+    var h = headers[i];
+    var label = '';
+    if (h.level === 2) {
+      h2n++; h3n = 0;
+      label = h2n + '. ' + h.text;
+      if (inSub) { html += '</ul>'; inSub = false; }
+      if (inHeader) { html += '</ul>'; inHeader = false; }
+      html += '<ul id="tocify-header' + hIdx + '" class="tocify-header list-group">';
+      html += '<li class="tocify-item list-group-item" data-unique="' + h.id + '">' + label + '</li>';
+      inHeader = true;
+      hIdx++;
+    } else if (h.level === 3) {
+      h3n++;
+      label = h2n + '.' + h3n + ' ' + h.text;
+      if (!inSub) {
+        html += '<ul class="tocify-subheader list-group" data-tag="3">';
+        inSub = true;
+      }
+      html += '<li class="tocify-item list-group-item" data-unique="' + h.id + '">' + label + '</li>';
+    }
+  }
+  if (inSub) html += '</ul>';
+  if (inHeader) html += '</ul>';
+
+  $toc.html(html);
+  $toc.find('.list-group-item').first().addClass('active');
+
+  function showActiveSubheader() {
+    var $active = $toc.find('.list-group-item.active');
+    var $parentUl = $active.closest('.tocify-header');
+    var $subParent = $active.closest('.tocify-subheader');
+    var $targetSub = $parentUl.length ? $parentUl.find('.tocify-subheader') : $subParent;
+    $toc.find('.tocify-subheader').not($targetSub).slideUp(150);
+    if ($targetSub && $targetSub.length && $targetSub.is(':hidden')) {
+      $targetSub.slideDown(250);
+    }
+  }
+  showActiveSubheader();
+
+  var isScrolling = false;
+  $toc.on('click', '.list-group-item', function(e) {
+    e.preventDefault();
+    var targetId = $(this).data('unique');
+    var $target = $('[id="' + targetId + '"]').first();
+    if ($target.length) {
+      isScrolling = true;
+      $toc.find('.list-group-item').removeClass('active');
+      $(this).addClass('active');
+      showActiveSubheader();
+      $('html, body').stop().animate({
+        scrollTop: $target.offset().top - 60
+      }, 400, function() {
+        setTimeout(function() { isScrolling = false; }, 100);
+      });
+    }
+  });
+
+  var scrollTimer;
+  $(window).on('scroll', function() {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(function() {
+      if (isScrolling) return;
+      var scrollTop = $(window).scrollTop() + 80;
+      var activeHeader = null;
+      for (var j = headers.length - 1; j >= 0; j--) {
+        var $el = headers[j].el;
+        var $section = $el.closest('.section[id]');
+        var top = ($section.length ? $section : $el).offset().top;
+        if (top <= scrollTop) { activeHeader = headers[j]; break; }
+      }
+      if (activeHeader) {
+        var $items = $toc.find('.list-group-item');
+        $items.removeClass('active');
+        $items.filter('[data-unique="' + activeHeader.id + '"]').addClass('active');
+        showActiveSubheader();
+      }
+    }, 50);
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,6 +1,0 @@
-id,name,email,age,salary,department,join_date
-1,Alice Smith,alice@example.com,32,75000.00,Engineering,2021-03-15
-2,Bob Johnson,bob@example.com,28,62000.00,Marketing,2022-01-10
-3,Carol Williams,carol@example.com,45,95000.00,Engineering,2018-06-01
-4,David Brown,david@example.com,38,83000.00,Sales,2020-09-20
-5,Eve Davis,eve@example.com,29,58000.00,Marketing,2023-02-14

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<!--
+  E-commerce Customer Behavior Analytics Report
+  Template: musigma-html-report-template.html
+  Generated: 2026-03-10 | Dataset: 350 customers
+-->
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>E-commerce Customer Behavior Analytics</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+<style type="text/css">
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.42857;
+  color: #333;
+  background: #fff;
+}
+div.container-fluid.main-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#TOC {
+  position: fixed;
+  top: 0;
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: auto;
+  overflow-y: auto;
+  margin: 25px 0 20px 0;
+  padding: 0;
+  background: #fff;
+  z-index: 1000;
+}
+#TOC ul { list-style: none; margin: 0; padding: 0; border: none; }
+#TOC .tocify-subheader { display: none; }
+#TOC .list-group-item {
+  display: block; padding: 4px 15px; line-height: 30px;
+  border: 0; border-radius: 0; background-color: inherit;
+  color: #000; cursor: pointer; font-size: 14px;
+  text-decoration: none; position: relative;
+}
+#TOC .tocify-subheader .list-group-item { padding-left: 25px; font-size: 12.6px; }
+#TOC .tocify-subheader .tocify-subheader .list-group-item { padding-left: 35px; font-size: 11.9px; }
+#TOC .list-group-item:hover { background-color: #f5f5f5; text-decoration: none; }
+#TOC .list-group-item.active,
+#TOC .list-group-item.active:hover,
+#TOC .list-group-item.active:focus {
+  color: #fff; background-color: #337ab7; border-color: #337ab7;
+}
+.toc-content { padding-left: 30px; padding-right: 40px; }
+h1.title { font-size: 38px; color: #800000; margin-top: 0; }
+h1 { font-size: 34px; }
+/* ===== Auto-numbered Headings ===== */
+.toc-content { counter-reset: h2counter; }
+h2 { font-size: 30px; font-weight: 400; color: #333; margin-top: 30px; counter-increment: h2counter; counter-reset: h3counter; }
+h2::before { content: counter(h2counter) ". "; font-weight: 500; }
+h3 { font-size: 24px; font-weight: 400; color: #333; margin-top: 22px; counter-increment: h3counter; }
+h3::before { content: counter(h2counter) "." counter(h3counter) " "; font-weight: 500; }
+h4, .h4 { font-size: 18px; }
+.section.level2 { margin-top: 20px; }
+.section.level3 { margin-top: 14px; }
+table { margin: 14px auto; border-collapse: collapse; border: none; font-size: 12px; color: #000; width: 100%; }
+thead { border-bottom: 1px solid #000; vertical-align: bottom; }
+tr, th, td { text-align: right; vertical-align: middle; padding: 0.5em 0.8em; border: none; }
+th { font-weight: bold; }
+td:first-child, th:first-child { text-align: left; }
+tbody tr:nth-child(odd) { background: #f5f5f5; }
+tbody tr:hover { background: rgba(66,165,245,0.15); }
+.chart-container { margin: 15px 0; width: 100%; }
+.report-header {
+  display: flex; align-items: center; padding: 10px 0 18px 0;
+  margin-bottom: 20px;
+}
+.report-header .logo { flex: 0 0 120px; }
+.report-header .logo img { height: 90px; }
+.report-header .title-block { flex: 1; text-align: center; }
+.report-header .title-block .title-text { font-size: 32px; font-weight: 500; color: #800000; }
+.report-header .title-block .author-date { font-size: 18px; color: #666; margin-top: 4px; }
+.report-header .spacer { flex: 0 0 120px; }
+
+@media print {
+  #TOC { display: none; }
+  .col-sm-8 { width: 100%; }
+  .toc-content { padding-left: 0; padding-right: 0; }
+}
+</style>
+</head>
+
+<body>
+<div class="container-fluid main-container">
+<div class="row">
+
+<div class="col-xs-12 col-sm-4 col-md-3">
+  <div id="TOC"></div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+<!-- Header -->
+<div class="report-header">
+  <div class="logo">
+    <img src="http://upload.wikimedia.org/wikipedia/en/0/0c/Mu_Sigma_Logo.jpg" alt="Mu Sigma"/>
+  </div>
+  <div class="title-block">
+    <div class="title-text">E-commerce Customer Behavior Analytics</div>
+    <div class="author-date"><b>Author(s):</b> Jarvis (MuSigma Digital Analytics) &nbsp;&nbsp;|&nbsp;&nbsp; <b>Version:</b> 1.0 &nbsp;&nbsp;|&nbsp;&nbsp; <b>Date:</b> March 10, 2026</div>
+  </div>
+  <div class="spacer"></div>
+</div>
+
+<!-- ==================== EXECUTIVE SUMMARY ==================== -->
+<div id="executive-summary" class="section level2">
+<h2>Executive Summary</h2>
+<p>This report presents a comprehensive analysis of <strong>350 e-commerce customers</strong> across 6 U.S. cities, examining purchasing behavior, membership engagement, satisfaction drivers, and discount effectiveness. The analysis reveals a highly stratified customer base where <strong>membership tier is the single strongest predictor</strong> of spend, engagement, and satisfaction.</p>
+
+<p><strong>Key Metrics:</strong> Total Customers: 350 | Avg. Total Spend: $845 | Satisfied Customers: 35.7% | Spend–Rating Correlation: 0.94</p>
+
+<p><strong>Critical Finding:</strong> 100% of Gold members are Satisfied, yet <strong>0% of Bronze members report satisfaction</strong> — a complete satisfaction cliff between tiers. Additionally, customers who received discounts show <strong>higher churn risk</strong> (66% Unsatisfied) despite the incentive, suggesting discounts are reactive rather than preventive.</p>
+
+<p><strong>Key Insights at a Glance:</strong></p>
+<ul>
+  <li><strong>Membership drives everything:</strong> Gold members spend 2.8× more than Bronze ($1,311 vs $473) and are exclusively Satisfied.</li>
+  <li><strong>Discount paradox:</strong> Discounted customers spend less ($787 vs $904) and are more dissatisfied (66% Unsatisfied vs 0%).</li>
+  <li><strong>Geographic concentration:</strong> San Francisco and New York dominate revenue with 3× higher average spend than Houston/Chicago.</li>
+  <li><strong>Gender gap:</strong> Male customers spend 40% more on average ($987 vs $704), driven by higher Gold membership representation.</li>
+  <li><strong>Strong spend–satisfaction loop:</strong> Satisfied customers spend $1,280 on average — 2.15× more than Unsatisfied ($595).</li>
+</ul>
+</div>
+
+<!-- ==================== DATA OVERVIEW ==================== -->
+<div id="data-overview" class="section level2">
+<h2>Data Overview</h2>
+<p>The dataset contains 350 customer records with 11 attributes spanning demographics, transaction behavior, and satisfaction outcomes.</p>
+
+<div id="dataset-summary" class="section level3">
+<h3>Dataset Summary</h3>
+<table>
+<thead><tr><th>Variable</th><th>Type</th><th>Range / Categories</th><th>Missing</th></tr></thead>
+<tbody>
+<tr><td>Customer ID</td><td>Identifier</td><td>101 – 450</td><td>0</td></tr>
+<tr><td>Gender</td><td>Categorical</td><td>Male (175), Female (175)</td><td>0</td></tr>
+<tr><td>Age</td><td>Numeric</td><td>26 – 43 years</td><td>0</td></tr>
+<tr><td>City</td><td>Categorical</td><td>6 cities (evenly distributed ~58 each)</td><td>0</td></tr>
+<tr><td>Membership Type</td><td>Categorical</td><td>Gold (117), Silver (117), Bronze (116)</td><td>0</td></tr>
+<tr><td>Total Spend ($)</td><td>Numeric</td><td>$410.80 – $1,520.10</td><td>0</td></tr>
+<tr><td>Items Purchased</td><td>Numeric</td><td>7 – 21</td><td>0</td></tr>
+<tr><td>Average Rating</td><td>Numeric</td><td>3.0 – 4.9</td><td>0</td></tr>
+<tr><td>Discount Applied</td><td>Boolean</td><td>TRUE (175), FALSE (175)</td><td>0</td></tr>
+<tr><td>Days Since Last Purchase</td><td>Numeric</td><td>9 – 63 days</td><td>0</td></tr>
+<tr><td>Satisfaction Level</td><td>Categorical</td><td>Satisfied (125), Neutral (107), Unsatisfied (116)</td><td>2</td></tr>
+</tbody>
+</table>
+<p><strong>Data Quality Note:</strong> 2 records (IDs 172, 244) have missing Satisfaction Level values. The dataset is otherwise clean with balanced distributions across Gender, Membership, and Discount dimensions — suggesting a structured sample or synthetic dataset designed for segmentation analysis.</p>
+</div>
+
+<div id="demographic-distribution" class="section level3">
+<h3>Demographic Distribution</h3>
+<div class="chart-container" id="chart-age-dist"></div>
+<div class="chart-container" id="chart-city-dist"></div>
+</div>
+</div>
+
+<!-- ==================== MEMBERSHIP TIER ANALYSIS ==================== -->
+<div id="membership-analysis" class="section level2">
+<h2>Membership Tier Analysis</h2>
+<p>Membership tier emerges as the <strong>dominant segmentation variable</strong>, with near-perfect stratification across all behavioral metrics. The three tiers operate as functionally distinct customer segments.</p>
+
+<div id="membership-spend" class="section level3">
+<h3>Spend &amp; Engagement by Tier</h3>
+<div class="chart-container" id="chart-membership-spend"></div>
+<table>
+<thead><tr><th>Metric</th><th>Gold (n=117)</th><th>Silver (n=117)</th><th>Bronze (n=116)</th><th>Gold vs Bronze Δ</th></tr></thead>
+<tbody>
+<tr><td>Avg. Total Spend</td><td>$1,311.10</td><td>$748.40</td><td>$473.40</td><td><strong>+177%</strong></td></tr>
+<tr><td>Avg. Items Purchased</td><td>17.6</td><td>11.7</td><td>8.5</td><td><strong>+107%</strong></td></tr>
+<tr><td>Avg. Rating Given</td><td>4.68</td><td>4.05</td><td>3.33</td><td><strong>+1.35 pts</strong></td></tr>
+<tr><td>Avg. Days Since Purchase</td><td>17.9</td><td>30.3</td><td>31.6</td><td><strong>−43%</strong></td></tr>
+<tr><td>% Satisfied</td><td>100%</td><td>6.8%</td><td>0%</td><td><strong>−100 pp</strong></td></tr>
+</tbody>
+</table>
+<p><strong>Key Insight:</strong> Gold members purchase nearly twice as frequently (every 18 days vs 32 days for Bronze) and rate their experience 1.35 points higher. This isn't just incremental — it's a fundamentally different customer relationship. The 100% → 0% satisfaction cliff between Gold and Bronze indicates membership tier may be a proxy for overall experience quality.</p>
+</div>
+
+<div id="membership-satisfaction" class="section level3">
+<h3>Satisfaction Breakdown by Tier</h3>
+<div class="chart-container" id="chart-membership-satisfaction"></div>
+<p>The satisfaction distribution reveals a stark polarization:</p>
+<ul>
+  <li><strong>Gold:</strong> 100% Satisfied — every single Gold member reports satisfaction. This tier functions as the "loyal core."</li>
+  <li><strong>Silver:</strong> A contested middle ground — 44% Neutral, 50% Unsatisfied, and only 7% Satisfied. These are the customers most at risk of churning <em>or</em> upgrading.</li>
+  <li><strong>Bronze:</strong> 50% Unsatisfied, 48% Neutral, 0% Satisfied. No Bronze member reports being satisfied — a red flag for the bottom tier.</li>
+</ul>
+</div>
+</div>
+
+<!-- ==================== SPENDING BEHAVIOR ==================== -->
+<div id="spending-behavior" class="section level2">
+<h2>Spending Behavior Analysis</h2>
+<p>Customer spending follows a clear trimodal distribution driven primarily by membership tier, with secondary effects from geography and gender.</p>
+
+<div id="spend-distribution" class="section level3">
+<h3>Spend Distribution</h3>
+<div class="chart-container" id="chart-spend-dist"></div>
+<p>The spend histogram reveals three distinct clusters corresponding to the three membership tiers — with virtually no overlap between Gold ($1,120–$1,520) and Bronze ($411–$530). Silver occupies the $660–$831 band.</p>
+</div>
+
+<div id="spend-vs-rating" class="section level3">
+<h3>Spend vs. Rating Correlation</h3>
+<div class="chart-container" id="chart-spend-rating"></div>
+<p>The Pearson correlation between Total Spend and Average Rating is <strong>r = 0.94</strong> — an exceptionally strong positive linear relationship. Higher-spending customers consistently rate their experience better. This could reflect either a genuine experience advantage for high-spend customers, or a self-selection effect where satisfied customers naturally spend more.</p>
+</div>
+
+<div id="spend-by-city" class="section level3">
+<h3>Spend by City</h3>
+<div class="chart-container" id="chart-city-spend"></div>
+<table>
+<thead><tr><th>City</th><th>Customers</th><th>Avg. Spend</th><th>Avg. Rating</th><th>Revenue Share</th></tr></thead>
+<tbody>
+<tr><td>San Francisco</td><td>58</td><td>$1,459.80</td><td>4.81</td><td><strong>28.5%</strong></td></tr>
+<tr><td>New York</td><td>59</td><td>$1,165.00</td><td>4.54</td><td><strong>23.2%</strong></td></tr>
+<tr><td>Los Angeles</td><td>59</td><td>$805.50</td><td>4.17</td><td>16.0%</td></tr>
+<tr><td>Miami</td><td>58</td><td>$690.40</td><td>3.93</td><td>13.5%</td></tr>
+<tr><td>Chicago</td><td>58</td><td>$499.90</td><td>3.46</td><td>9.8%</td></tr>
+<tr><td>Houston</td><td>58</td><td>$446.90</td><td>3.19</td><td>8.7%</td></tr>
+</tbody>
+</table>
+<p><strong>Geographic Concentration:</strong> San Francisco and New York together account for <strong>51.7% of total revenue</strong> from only 33.4% of customers. This is driven by heavy Gold membership concentration in these cities. Houston and Chicago, dominated by Bronze members, contribute less than 19% combined.</p>
+</div>
+</div>
+
+<!-- ==================== DISCOUNT EFFECTIVENESS ==================== -->
+<div id="discount-analysis" class="section level2">
+<h2>Discount Effectiveness Analysis</h2>
+<p>One of the most counterintuitive findings in this dataset: <strong>discounts correlate with worse outcomes across every metric</strong>.</p>
+
+<div id="discount-impact" class="section level3">
+<h3>Discount Impact on Key Metrics</h3>
+<div class="chart-container" id="chart-discount-comparison"></div>
+<table>
+<thead><tr><th>Metric</th><th>Discount = YES (n=175)</th><th>Discount = NO (n=175)</th><th>Delta</th></tr></thead>
+<tbody>
+<tr><td>Avg. Total Spend</td><td>$787.30</td><td>$903.50</td><td><strong>−$116 (−13%)</strong></td></tr>
+<tr><td>Avg. Days Since Purchase</td><td>36.8 days</td><td>16.4 days</td><td><strong>+20.4 days (+124%)</strong></td></tr>
+<tr><td>% Satisfied</td><td>33.7%</td><td>37.7%</td><td>−4.0 pp</td></tr>
+<tr><td>% Unsatisfied</td><td>66.3%</td><td>0%</td><td><strong>+66.3 pp</strong></td></tr>
+</tbody>
+</table>
+</div>
+
+<div id="discount-satisfaction" class="section level3">
+<h3>Discount vs. Satisfaction</h3>
+<div class="chart-container" id="chart-discount-satisfaction"></div>
+<p><strong>The Discount Paradox:</strong> Customers who received discounts are <strong>66% Unsatisfied</strong> compared to <strong>0% Unsatisfied</strong> among non-discount customers. They also haven't purchased in 37 days on average vs. 16 days for non-discount customers. This strongly suggests discounts are being applied <em>reactively</em> to already-disengaged customers (Bronze and Silver tiers with low recency), rather than proactively to drive loyalty. The discount itself is not causing dissatisfaction — it's being targeted at customers who are already dissatisfied.</p>
+</div>
+</div>
+
+<!-- ==================== GENDER ANALYSIS ==================== -->
+<div id="gender-analysis" class="section level2">
+<h2>Gender-Based Analysis</h2>
+<p>Gender differences in spending are statistically significant but likely reflect <strong>underlying membership composition</strong> rather than inherent behavioral differences.</p>
+
+<div id="gender-spend" class="section level3">
+<h3>Spend &amp; Engagement by Gender</h3>
+<div class="chart-container" id="chart-gender-spend"></div>
+<table>
+<thead><tr><th>Metric</th><th>Male (n=175)</th><th>Female (n=175)</th><th>Delta</th></tr></thead>
+<tbody>
+<tr><td>Avg. Total Spend</td><td>$986.90</td><td>$703.80</td><td><strong>+40%</strong></td></tr>
+<tr><td>Avg. Items Purchased</td><td>14.4</td><td>10.8</td><td>+33%</td></tr>
+</tbody>
+</table>
+<p><strong>Interpretation Caution:</strong> The 40% male spending advantage is likely confounded by membership tier distribution. Males in this dataset skew toward Gold/Silver membership while females have higher Bronze representation. A controlled analysis within each tier would be needed to isolate true gender effects.</p>
+</div>
+</div>
+
+<!-- ==================== SATISFACTION DRIVERS ==================== -->
+<div id="satisfaction-drivers" class="section level2">
+<h2>Satisfaction Drivers</h2>
+<p>Customer satisfaction is not uniformly distributed — it clusters around specific combinations of membership, spend, and recency.</p>
+
+<div id="satisfaction-by-spend" class="section level3">
+<h3>Satisfaction by Spend Level</h3>
+<div class="chart-container" id="chart-satisfaction-spend"></div>
+<table>
+<thead><tr><th>Satisfaction Level</th><th>Count</th><th>% of Total</th><th>Avg. Spend</th><th>Avg. Rating</th><th>Avg. Days Since Purchase</th></tr></thead>
+<tbody>
+<tr><td>Satisfied</td><td>125</td><td>35.7%</td><td><strong>$1,280.30</strong></td><td>4.65</td><td>17.5</td></tr>
+<tr><td>Neutral</td><td>107</td><td>30.6%</td><td>$616.40</td><td>3.66</td><td>17.1</td></tr>
+<tr><td>Unsatisfied</td><td>116</td><td>33.1%</td><td>$595.10</td><td>3.69</td><td>42.8</td></tr>
+<tr><td>Unknown</td><td>2</td><td>0.6%</td><td>$425.80</td><td>3.25</td><td>22.0</td></tr>
+</tbody>
+</table>
+</div>
+
+<div id="recency-analysis" class="section level3">
+<h3>Recency &amp; Churn Risk</h3>
+<div class="chart-container" id="chart-recency-tier"></div>
+<p>Recency is a strong engagement indicator. Unsatisfied customers average <strong>42.8 days</strong> since last purchase — 2.4× the Satisfied average (17.5 days). This is primarily concentrated in Silver and Bronze tiers with discounts applied, forming a clear churn-risk segment:</p>
+<ul>
+  <li><strong>High Churn Risk:</strong> Silver/Bronze + Discount Applied + Days &gt; 30 → 116 customers (33% of base)</li>
+  <li><strong>Loyal Core:</strong> Gold + No Discount + Days &lt; 20 → 117 customers (33% of base)</li>
+  <li><strong>Swing Segment:</strong> Silver + No Discount + Neutral satisfaction → key upgrade targets</li>
+</ul>
+</div>
+</div>
+
+<!-- ==================== RECOMMENDATIONS ==================== -->
+<div id="recommendations" class="section level2">
+<h2>Recommendations</h2>
+<table>
+<thead><tr><th>#</th><th>Priority</th><th>Recommendation</th><th>Rationale</th><th>Expected Impact</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>P0</strong></td><td><strong>Redesign Discount Strategy:</strong> Shift from reactive discounts on disengaged customers to proactive loyalty rewards for Silver members approaching upgrade thresholds.</td><td>Current discounts correlate with 66% unsatisfaction and 124% longer purchase gaps — they're not working as retention tools.</td><td>Reduce churn in Silver tier by 15-25%; improve discount ROI.</td></tr>
+<tr><td>2</td><td><strong>P0</strong></td><td><strong>Create Silver → Gold Upgrade Path:</strong> Design a clear progression program for Silver members (especially the 8 already Satisfied) with spend-based milestones and benefits preview.</td><td>Silver tier is the battleground — 50% Unsatisfied but 7% already Satisfied. Small nudges could tip the balance.</td><td>Convert 10-15% of Silver to Gold; increase average spend by $300+/customer.</td></tr>
+<tr><td>3</td><td><strong>P1</strong></td><td><strong>Investigate Bronze Experience:</strong> Conduct qualitative research (surveys, interviews) with Bronze members to understand the zero-satisfaction phenomenon.</td><td>0% satisfaction across 116 customers is not noise — it's systematic. The root cause must be identified.</td><td>Identify fixable pain points; establish a satisfaction baseline for Bronze.</td></tr>
+<tr><td>4</td><td><strong>P1</strong></td><td><strong>Geographic Expansion Strategy:</strong> Invest in customer acquisition in SF and NY (high-spend markets) while improving experience quality in Houston and Chicago.</td><td>SF+NY contribute 51.7% of revenue. Houston+Chicago underperform at 18.5% despite similar customer counts.</td><td>Increase revenue concentration in high-value markets; lift underperforming cities.</td></tr>
+<tr><td>5</td><td><strong>P2</strong></td><td><strong>Build a Churn Early Warning System:</strong> Flag customers when Days Since Purchase exceeds 25 days (especially Silver/Bronze with discounts) for proactive outreach.</td><td>42.8-day average for Unsatisfied customers vs 17.5 for Satisfied — recency is a leading indicator.</td><td>Reduce churn rate by 10-20% through early intervention.</td></tr>
+<tr><td>6</td><td><strong>P2</strong></td><td><strong>Gender-Controlled Segmentation:</strong> Conduct tier-controlled analysis to isolate true gender effects and tailor marketing accordingly.</td><td>The apparent 40% gender spend gap may be entirely explained by tier composition, not gender preference.</td><td>More precise targeting; avoid misdirected gender-based campaigns.</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ==================== CONCLUSION ==================== -->
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>This e-commerce customer base is <strong>sharply segmented by membership tier</strong>, with tier functioning as a near-perfect proxy for spend, satisfaction, engagement, and retention. The data tells a clear story:</p>
+<ul>
+  <li><strong>Gold members are the engine</strong> — high spend, high satisfaction, high frequency. Protect this segment at all costs.</li>
+  <li><strong>Silver members are the opportunity</strong> — they're the swing segment where targeted investment can yield the highest marginal returns.</li>
+  <li><strong>Bronze members need intervention</strong> — zero satisfaction is a systemic failure that discounts alone cannot fix.</li>
+  <li><strong>The discount program needs a fundamental rethink</strong> — it's currently a symptom tracker, not a solution.</li>
+</ul>
+<p>The 0.94 correlation between spend and rating, combined with the perfect satisfaction stratification by tier, suggests that <strong>experience quality scales with engagement level</strong>. The priority should be moving customers up the tier ladder through better experiences — not throwing discounts at already-disengaged customers.</p>
+<p><strong>Next Step:</strong> Conduct a controlled A/B test on the Silver tier — test a proactive upgrade incentive program (benefits preview + spend milestone tracker) against the current reactive discount approach. Measure conversion to Gold, satisfaction shift, and 90-day retention.</p>
+</div>
+
+</div><!-- /toc-content -->
+</div><!-- /row -->
+</div><!-- /main-container -->
+
+<!-- ============================================================ -->
+<!-- PLOTLY CHARTS                                                 -->
+<!-- ============================================================ -->
+<script>
+var P=["#4E79A7","#59A14F","#F28E2B","#E15759","#BAB0AC"], H=370;
+var L={font:{family:'"Helvetica Neue",Helvetica,Arial,sans-serif',size:11},paper_bgcolor:'#FFFFFF',plot_bgcolor:'#FFFFFF',margin:{t:50,b:60,l:60,r:30},xaxis:{gridcolor:'#E5E5E5'},yaxis:{gridcolor:'#E5E5E5'}};
+
+// Chart: Age Distribution
+Plotly.newPlot('chart-age-dist', [{
+  x: ['26-30', '31-35', '36-40', '41-45'],
+  y: [117, 117, 58, 58],
+  type: 'bar',
+  marker: {color: [P[0], P[1], P[2], P[3]]},
+  text: [117, 117, 58, 58],
+  textposition: 'outside',
+  hovertemplate: 'Age Group: %{x}<br>Count: %{y}<extra></extra>'
+}], $.extend(true,{},L,{
+  title: {text:'Customer Age Distribution'},
+  xaxis: {title:'Age Group'},
+  yaxis: {title:'Number of Customers', range:[0,140]},
+  height: H
+}), {responsive:true});
+
+// Chart: City Distribution (horizontal bar)
+Plotly.newPlot('chart-city-dist', [{
+  y: ['Houston','Chicago','Miami','Los Angeles','New York','San Francisco'],
+  x: [58, 58, 58, 59, 59, 58],
+  type: 'bar',
+  orientation: 'h',
+  marker: {color: P[0]},
+  text: [58, 58, 58, 59, 59, 58],
+  textposition: 'outside',
+  hovertemplate: '%{y}: %{x} customers<extra></extra>'
+}], $.extend(true,{},L,{
+  title: {text:'Customer Distribution by City'},
+  xaxis: {title:'Number of Customers', range:[0,70]},
+  yaxis: {title:''},
+  height: H, margin:{l:120}
+}), {responsive:true});
+
+// Chart: Membership Spend Comparison (grouped bar)
+Plotly.newPlot('chart-membership-spend', [
+  {name:'Avg. Spend ($)', x:['Gold','Silver','Bronze'], y:[1311.1, 748.4, 473.4], type:'bar', marker:{color:P[0]}, text:['$1,311','$748','$473'], textposition:'outside'},
+  {name:'Avg. Items', x:['Gold','Silver','Bronze'], y:[17.6, 11.7, 8.5], type:'bar', marker:{color:P[1]}, text:['17.6','11.7','8.5'], textposition:'outside', yaxis:'y2'}
+], $.extend(true,{},L,{
+  title: {text:'Spend & Items Purchased by Membership Tier'},
+  xaxis: {title:'Membership Tier'},
+  yaxis: {title:'Average Spend ($)', side:'left', range:[0,1600]},
+  yaxis2: {title:'Avg. Items Purchased', side:'right', overlaying:'y', range:[0,25]},
+  barmode: 'group',
+  height: H, legend:{x:0.7,y:1}
+}), {responsive:true});
+
+// Chart: Membership Satisfaction (stacked bar)
+Plotly.newPlot('chart-membership-satisfaction', [
+  {name:'Satisfied', x:['Gold','Silver','Bronze'], y:[117, 8, 0], type:'bar', marker:{color:P[0]}},
+  {name:'Neutral', x:['Gold','Silver','Bronze'], y:[0, 51, 56], type:'bar', marker:{color:P[2]}},
+  {name:'Unsatisfied', x:['Gold','Silver','Bronze'], y:[0, 58, 58], type:'bar', marker:{color:P[1]}}
+], $.extend(true,{},L,{
+  title: {text:'Satisfaction Distribution by Membership Tier'},
+  xaxis: {title:'Membership Tier'},
+  yaxis: {title:'Number of Customers'},
+  barmode: 'stack',
+  height: H, legend:{x:0.7,y:1}
+}), {responsive:true});
+
+// Chart: Spend Distribution (histogram by tier)
+Plotly.newPlot('chart-spend-dist', [
+  {x:[1120.2,1480.3,1150.6,1520.1,1200.8,1360.2,1170.3,1500.1,1190.8,1470.5,1140.6,1500.1,1180.8,1470.5,1160.3,1500.1,1190.8,1460.5,1370.2,1160.3,1460.5,1140.6,1490.1,1180.8,1470.5,1130.6,1490.1,1180.8,1470.5,1140.6,1500.1,1190.8,1460.5,1370.2,1160.3,1460.5,1130.6,1490.1,1180.8,1470.5,1140.6,1500.1,1190.8,1420.8,1210.6,1390.2,1170.3,1450.5,1130.6,1490.1,1180.8,1470.5,1140.6,1500.1,1190.8,1460.5,1370.2,1160.3,1460.5,1130.6,1490.1,1180.8,1470.5,1140.6,1500.1,1190.8,1460.5,1370.2,1160.3,1460.5,1140.6,1490.1,1190.8,1470.5,1130.6,1490.1,1180.8,1470.5,1140.6,1500.1,1190.8,1460.5,1370.2,1160.3,1460.5,1140.6,1480.1,1190.8,1450.5,1160.6,1490.1,1200.8,1460.5,1140.6,1480.1,1190.8,1450.5,1160.6,1490.1,1200.8,1460.5,1140.6,1480.1,1190.8,1450.5,1160.6,1490.1,1200.8,1460.5,1140.6,1480.1,1190.8,1450.5,1160.6,1490.1,1200.8,1460.5],
+   type:'histogram', name:'Gold', marker:{color:P[0]}, opacity:0.75, nbinsx:20},
+  {x:[780.5,720.4,800.9,690.3,820.75,700.6,790.2,710.4,810.9,670.3,830.75,690.6,800.2,690.6,820.9,670.3,830.75,690.6,800.2,700.4,810.9,680.3,820.9,690.4,710.4,810.9,670.3,790.2,710.4,820.9,680.3,830.75,690.6,800.2,710.4,810.9,670.3,790.2,710.4,820.9,680.3,830.75,690.6,800.2,730.4,780.9,670.6,810.2,690.4,820.9,680.3,790.2,710.4,810.9,670.3,830.75,690.6,800.2,700.4,820.9,680.3,790.2,710.4,800.9,660.3,790.2,780.2,690.6,800.9,660.3,790.2,710.4,820.9,660.3,790.2,710.4,800.9,660.3,780.2,710.4,820.9,660.3,790.2,710.4,800.9,660.3,780.2,710.4,820.9,660.3,780.2,710.4,800.9,660.3,780.2,710.4,820.9,660.3,780.2,710.4,800.9,660.3,790.2,710.4,820.9,660.3,780.2,710.4,830.9,690.3,800.2,790.2,770.2,710.4,820.9,660.3,780.2],
+   type:'histogram', name:'Silver', marker:{color:P[1]}, opacity:0.75, nbinsx:20},
+  {x:[510.75,440.8,495.25,470.5,530.4,450.9,500.75,420.8,485.25,460.5,520.4,440.9,505.75,430.8,485.25,460.5,520.4,440.9,505.75,430.8,480.25,470.5,505.75,430.8,485.25,460.5,520.4,440.9,500.75,420.8,480.25,470.5,495.25,450.6,420.8,480.25,470.5,505.75,430.8,485.25,460.5,520.4,440.9,515.75,450.8,460.9,495.25,430.8,420.8,480.25,470.5,505.75,430.8,485.25,460.5,520.4,440.9,500.75,450.8,475.25,470.5,515.75,430.8,495.25,440.5,505.75,430.8,485.25,460.5,510.75,440.8,495.25,470.5,505.75,450.8,475.25,430.5,515.75,430.8,505.75,450.8,475.25,470.5,505.75,430.8,440.5,505.75,450.8,475.25,470.5,505.75,430.8,440.5,505.75,450.8,475.25,470.5,515.75,430.8,505.75,450.8,475.25,470.5,515.75,430.8,505.75,450.8,475.25,470.5,480.5,470.8,510.75,440.5,410.8,490.25,480.5],
+   type:'histogram', name:'Bronze', marker:{color:P[2]}, opacity:0.75, nbinsx:20}
+], $.extend(true,{},L,{
+  title: {text:'Spend Distribution by Membership Tier'},
+  xaxis: {title:'Total Spend ($)'},
+  yaxis: {title:'Frequency'},
+  barmode: 'overlay',
+  height: H, legend:{x:0.02,y:1}
+}), {responsive:true});
+
+// Chart: Spend vs Rating scatter
+Plotly.newPlot('chart-spend-rating', [{
+  x: [1311.1, 748.4, 473.4],
+  y: [4.68, 4.05, 3.33],
+  text: ['Gold<br>n=117', 'Silver<br>n=117', 'Bronze<br>n=116'],
+  mode: 'markers+text',
+  textposition: 'top center',
+  marker: {size: [40, 40, 40], color: [P[0], P[1], P[2]], opacity: 0.8},
+  hovertemplate: '%{text}<br>Avg Spend: $%{x:.0f}<br>Avg Rating: %{y:.2f}<extra></extra>'
+},{
+  x: [400, 1600],
+  y: [3.1, 4.9],
+  mode: 'lines',
+  line: {color: '#ccc', dash: 'dash', width: 1},
+  showlegend: false,
+  hoverinfo: 'skip'
+}], $.extend(true,{},L,{
+  title: {text:'Average Spend vs. Average Rating by Tier (r = 0.94)'},
+  xaxis: {title:'Average Total Spend ($)', range:[300,1700]},
+  yaxis: {title:'Average Rating', range:[3.0, 5.1]},
+  showlegend: false,
+  height: H,
+  annotations: [{x:900, y:3.3, text:'Pearson r = 0.94', showarrow:false, font:{size:14,color:P[1]}}]
+}), {responsive:true});
+
+// Chart: City Spend (bar + rating line)
+Plotly.newPlot('chart-city-spend', [
+  {x:['Houston','Chicago','Miami','Los Angeles','New York','San Francisco'],
+   y:[446.9, 499.9, 690.4, 805.5, 1165.0, 1459.8],
+   type:'bar', name:'Avg. Spend ($)', marker:{color:P[0]},
+   text:['$447','$500','$690','$806','$1,165','$1,460'], textposition:'outside'},
+  {x:['Houston','Chicago','Miami','Los Angeles','New York','San Francisco'],
+   y:[3.19, 3.46, 3.93, 4.17, 4.54, 4.81],
+   type:'scatter', mode:'lines+markers+text', name:'Avg. Rating',
+   yaxis:'y2', marker:{color:P[1], size:8}, line:{color:P[1]},
+   text:['3.19','3.46','3.93','4.17','4.54','4.81'], textposition:'top center'}
+], $.extend(true,{},L,{
+  title: {text:'Average Spend & Rating by City'},
+  xaxis: {title:'City'},
+  yaxis: {title:'Avg. Spend ($)', range:[0,1700]},
+  yaxis2: {title:'Avg. Rating', side:'right', overlaying:'y', range:[2.5,5.5]},
+  height: H, legend:{x:0.02,y:1}
+}), {responsive:true});
+
+// Chart: Discount Comparison (grouped bar)
+Plotly.newPlot('chart-discount-comparison', [
+  {name:'With Discount', x:['Avg. Spend ($)','Avg. Days Since Purchase','Avg. Rating'], y:[787.3, 36.8, 3.85], type:'bar', marker:{color:P[1]},
+   text:['$787','36.8 days','3.85'], textposition:'outside'},
+  {name:'No Discount', x:['Avg. Spend ($)','Avg. Days Since Purchase','Avg. Rating'], y:[903.5, 16.4, 4.13], type:'bar', marker:{color:P[0]},
+   text:['$904','16.4 days','4.13'], textposition:'outside'}
+], $.extend(true,{},L,{
+  title: {text:'Key Metrics: Discount vs. No Discount'},
+  yaxis: {title:'Value'},
+  barmode: 'group',
+  height: H, legend:{x:0.7,y:1}
+}), {responsive:true});
+
+// Chart: Discount vs Satisfaction (stacked percentage)
+var discYesSat = [59, 0, 116],  // Sat, Neutral, Unsat for discount=yes
+    discNoSat  = [66, 107, 0];  // Sat, Neutral, Unsat for discount=no
+Plotly.newPlot('chart-discount-satisfaction', [
+  {name:'Satisfied', x:['Discount Applied','No Discount'], y:[59, 66], type:'bar', marker:{color:P[0]},
+   text:['59 (33.7%)','66 (37.7%)'], textposition:'inside'},
+  {name:'Neutral', x:['Discount Applied','No Discount'], y:[0, 107], type:'bar', marker:{color:P[2]},
+   text:['0 (0%)','107 (61.1%)'], textposition:'inside'},
+  {name:'Unsatisfied', x:['Discount Applied','No Discount'], y:[116, 0], type:'bar', marker:{color:P[1]},
+   text:['116 (66.3%)','0 (0%)'], textposition:'inside'}
+], $.extend(true,{},L,{
+  title: {text:'Satisfaction Distribution: Discount vs. No Discount'},
+  xaxis: {title:''},
+  yaxis: {title:'Number of Customers'},
+  barmode: 'stack',
+  height: H, legend:{x:0.7,y:1}
+}), {responsive:true});
+
+// Chart: Gender Spend
+Plotly.newPlot('chart-gender-spend', [{
+  x: ['Male', 'Female'],
+  y: [986.9, 703.8],
+  type: 'bar',
+  marker: {color: [P[0], P[1]]},
+  text: ['$987<br>(14.4 items)', '$704<br>(10.8 items)'],
+  textposition: 'outside',
+  width: [0.5, 0.5]
+}], $.extend(true,{},L,{
+  title: {text:'Average Spend & Items by Gender'},
+  xaxis: {title:'Gender'},
+  yaxis: {title:'Average Total Spend ($)', range:[0,1200]},
+  height: H, showlegend:false
+}), {responsive:true});
+
+// Chart: Satisfaction by Spend Level
+Plotly.newPlot('chart-satisfaction-spend', [{
+  x: ['Satisfied', 'Neutral', 'Unsatisfied'],
+  y: [1280.3, 616.4, 595.1],
+  type: 'bar',
+  marker: {color: [P[0], P[2], P[1]]},
+  text: ['$1,280<br>Rating: 4.65', '$616<br>Rating: 3.66', '$595<br>Rating: 3.69'],
+  textposition: 'outside'
+}], $.extend(true,{},L,{
+  title: {text:'Average Spend by Satisfaction Level'},
+  xaxis: {title:'Satisfaction Level'},
+  yaxis: {title:'Average Total Spend ($)', range:[0,1500]},
+  height: H, showlegend:false
+}), {responsive:true});
+
+// Chart: Recency by Tier (box-plot style using bar + error)
+Plotly.newPlot('chart-recency-tier', [{
+  x: ['Gold', 'Silver', 'Bronze'],
+  y: [17.9, 30.3, 31.6],
+  type: 'bar',
+  marker: {color: [P[0], P[1], P[2]]},
+  text: ['17.9 days', '30.3 days', '31.6 days'],
+  textposition: 'outside',
+  error_y: {type:'data', array:[8,15,14], visible:true, color:'#999'}
+}], $.extend(true,{},L,{
+  title: {text:'Average Days Since Last Purchase by Tier'},
+  xaxis: {title:'Membership Tier'},
+  yaxis: {title:'Days Since Last Purchase', range:[0,55]},
+  height: H, showlegend:false
+}), {responsive:true});
+</script>
+
+<!-- ============================================================ -->
+<!-- INLINE TOC BUILDER                                            -->
+<!-- ============================================================ -->
+<script>
+$(document).ready(function() {
+  var $toc = $('#TOC');
+  var $content = $('.toc-content');
+  var headers = [];
+  var headerIdCounter = 0;
+
+  $content.find('h2, h3').each(function() {
+    var $h = $(this);
+    var level = this.tagName === 'H2' ? 2 : 3;
+    var id = $h.attr('id');
+    if (!id) {
+      var $parent = $h.closest('.section[id]');
+      if ($parent.length) id = $parent.attr('id');
+    }
+    if (!id) {
+      id = 'section-' + headerIdCounter;
+      $h.attr('id', id);
+    }
+    headerIdCounter++;
+    headers.push({ text: $h.text().trim(), id: id, level: level, el: $h });
+  });
+
+  if (!headers.length) return;
+
+  // Build numbered TOC labels to match CSS counters
+  var h2n = 0, h3n = 0;
+  var html = '';
+  var inHeader = false;
+  var inSub = false;
+  var hIdx = 0;
+
+  for (var i = 0; i < headers.length; i++) {
+    var h = headers[i];
+    var label = '';
+    if (h.level === 2) {
+      h2n++; h3n = 0;
+      label = h2n + '. ' + h.text;
+      if (inSub) { html += '</ul>'; inSub = false; }
+      if (inHeader) { html += '</ul>'; inHeader = false; }
+      html += '<ul id="tocify-header' + hIdx + '" class="tocify-header list-group">';
+      html += '<li class="tocify-item list-group-item" data-unique="' + h.id + '">' + label + '</li>';
+      inHeader = true;
+      hIdx++;
+    } else if (h.level === 3) {
+      h3n++;
+      label = h2n + '.' + h3n + ' ' + h.text;
+      if (!inSub) {
+        html += '<ul class="tocify-subheader list-group" data-tag="3">';
+        inSub = true;
+      }
+      html += '<li class="tocify-item list-group-item" data-unique="' + h.id + '">' + label + '</li>';
+    }
+  }
+  if (inSub) html += '</ul>';
+  if (inHeader) html += '</ul>';
+
+  $toc.html(html);
+  $toc.find('.list-group-item').first().addClass('active');
+
+  function showActiveSubheader() {
+    var $active = $toc.find('.list-group-item.active');
+    var $parentUl = $active.closest('.tocify-header');
+    var $subParent = $active.closest('.tocify-subheader');
+    var $targetSub = $parentUl.length ? $parentUl.find('.tocify-subheader') : $subParent;
+    $toc.find('.tocify-subheader').not($targetSub).slideUp(150);
+    if ($targetSub && $targetSub.length && $targetSub.is(':hidden')) {
+      $targetSub.slideDown(250);
+    }
+  }
+  showActiveSubheader();
+
+  var isScrolling = false;
+  $toc.on('click', '.list-group-item', function(e) {
+    e.preventDefault();
+    var targetId = $(this).data('unique');
+    var $target = $('[id="' + targetId + '"]').first();
+    if ($target.length) {
+      isScrolling = true;
+      $toc.find('.list-group-item').removeClass('active');
+      $(this).addClass('active');
+      showActiveSubheader();
+      $('html, body').stop().animate({
+        scrollTop: $target.offset().top - 60
+      }, 400, function() {
+        setTimeout(function() { isScrolling = false; }, 100);
+      });
+    }
+  });
+
+  var scrollTimer;
+  $(window).on('scroll', function() {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(function() {
+      if (isScrolling) return;
+      var scrollTop = $(window).scrollTop() + 80;
+      var activeHeader = null;
+      for (var j = headers.length - 1; j >= 0; j--) {
+        var $el = headers[j].el;
+        var $section = $el.closest('.section[id]');
+        var top = ($section.length ? $section : $el).offset().top;
+        if (top <= scrollTop) { activeHeader = headers[j]; break; }
+      }
+      if (activeHeader) {
+        var $items = $toc.find('.list-group-item');
+        $items.removeClass('active');
+        $items.filter('[data-unique="' + activeHeader.id + '"]').addClass('active');
+        showActiveSubheader();
+      }
+    }, 50);
+  });
+});
+</script>
+
+</body>
+</html>
