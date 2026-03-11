@@ -1,0 +1,40 @@
+name: Skill Upload Review
+
+on:
+  push:
+    paths:
+      - '**'
+
+jobs:
+  review-skill-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check for SKILL.md and scan for sensitive info
+        run: |
+          SKILL_DIR=$(find . -type d -name '*' | grep -v '.git' | head -n 1)
+          if [ ! -f "$SKILL_DIR/SKILL.md" ]; then
+            echo "ERROR: SKILL.md file not found in $SKILL_DIR"
+            exit 1
+          fi
+          echo "Checking for sensitive info..."
+          grep -E -r '(token|key|secret|password|api[_-]?key|[\w\.-]+@[\w\.-]+|\b\d{10,}\b)' "$SKILL_DIR" || echo "No sensitive info found."
+
+      - name: Send review email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.GMAIL_USER }}
+          password: ${{ secrets.GMAIL_PASSWORD }}
+          subject: Skill Upload Review Request
+          to: mudigitalemployee@gmail.com
+          from: ${{ secrets.GMAIL_USER }}
+          body: |
+            Skill upload detected in ${{ github.repository }}.
+            Please review the SKILL.md and scan results.
+            If you approve, reply to this email or trigger the next workflow step.
+
+      # Optionally, you can add a manual approval step or automate further actions
