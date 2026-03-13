@@ -1,216 +1,116 @@
 ---
 name: connected-insights
-description: "CXO-grade business insight generation from dashboards, reports, and datasets. Accepts CSV, XLSX, PDF, images (PNG/JPG), HTML reports, Markdown, PPTX, Tableau (.twb/.twbx), and Power BI (.pbix). Delivers structured, prescriptive insights using the framework: What Happened, Why It Happened, What Should We Do, What We'll Achieve. Supports multi-image per-image analysis, context enrichment, cross-dashboard correlation, and comparative analysis. Output is CTO/CXO-standard with executive summary, per-source findings, and prioritized action plan."
-user-invokable: true
-command-dispatch: tool
-command-tool: exec
-command-arg-mode: raw
-command: python3 scripts/insight_generator/pipeline.py
-metadata: { "openclaw": { "emoji": "🔗", "requires": { "bins": ["python3"] } } }
+description: >
+  Analyze data (CSV, PDF, or dashboard screenshots/images) and deliver business
+  insights. Always generates an HTML report using Mu Sigma branded format.
+  Single input → Executive Summary + Findings & Insights + Recommendations.
+  Multiple inputs → same per input, plus a Cross-Comparison section.
+  Use when: user uploads data files or dashboard images and asks for analysis,
+  insights, business intelligence, comparison, or recommendations.
+  Triggers on "analyze this data", "compare these dashboards",
+  "business insights", "what does this data tell me", "compare datasets".
+  NOT for: chart generation, data visualization, or non-analytical tasks.
 ---
 
-# Connected Insights
+# BI Report Generator
 
-CXO-grade insight engine that analyses dashboards, reports, and datasets to
-produce prescriptive, business-standard findings — not generic summaries.
+Always generates an HTML report (`Business_Insight_Report.html`) using `assets/report_template.html`.
 
-## CRITICAL: Always Use This Skill for Insights
+## Mode 1: Single Input → HTML Report
 
-**NEVER generate insights manually using LLM reasoning when this skill is
-available.** If the user's request matches trigger keywords below, ALWAYS
-invoke this skill by running the pipeline. The pipeline produces superior,
-structured, data-driven analysis compared to freeform LLM output.
+When user provides ONE dataset, dashboard, or image:
 
-### Trigger Keywords
-
-generate insights, insights, key insights, insight report, business insights,
-connected insights, data insights, analyze data, analyse data, analyze this,
-analyse this, analyze dataset, analyse dataset, analyze dashboard,
-analyse dashboard, analyze report, analyse report, trend analysis,
-identify trends, spot trends, find trends, detect trends, show trends,
-anomaly detection, identify anomalies, detect anomalies, find anomalies,
-spot anomalies, outlier detection, identify outliers, detect outliers,
-find outliers, spot outliers, extract patterns, key patterns, find patterns,
-detect patterns, strategic recommendations, strategic movements,
-strategic actions, what should we do, actionable recommendations,
-data-driven recommendations, key findings, key takeaways, summarize data,
-summarize dataset, data summary, dataset summary, dashboard analysis,
-report analysis, EDA, exploratory analysis, deep dive, data deep dive,
-performance analysis, KPI analysis, metric analysis, what happened,
-root cause analysis, diagnostic analysis, prescriptive analysis,
-descriptive analysis, comparative analysis, compare dashboards,
-compare datasets, cross-dashboard, benchmark analysis, correlation analysis.
-
-## Output Quality Standard
-
-**All output must meet CTO/CXO presentation standard:**
-
-- NO generic phrasing ("this could be because…", "consider investigating…")
-- Every finding must cite specific data points from the source
-- Insights must be prescriptive: specific actions, owners, timelines, expected ROI
-- Context enrichment: before generating insights, the engine identifies domain,
-  benchmarks, and cross-source patterns to provide broader business context
-- Per-image/per-source analysis: each input gets dedicated findings before
-  cross-cutting synthesis
-
-## Report Structure — HTML Report via MuSigma Template (MANDATORY)
-
-When generating an HTML report from connected-insights via the report_generatror,
-the report MUST use exactly this 3-section TOC structure. No other structure is acceptable.
-
-### Purpose
-This skill generates **collated, cross-dashboard insights** — synthesized findings across
-multiple dashboards/sources as a unified whole. It is NOT for individual dashboard analysis
-of separate, unrelated content. The insights must connect the dots across sources.
-
-### Mandatory TOC / Sections
+Generate `Business_Insight_Report.html` with three sections:
 
 **1. Executive Summary**
-- Board-ready 3-5 sentence synthesis for CXO audience
-- Headline metrics, overall health assessment, top-priority flags
-- Sets the narrative for the entire report
+- 3–5 sentence paragraph overview of the data at a glance
+- Highlight the single most critical finding and its business impact
+- Set context for the detailed findings below
 
-**2. Uploaded Images**
-- Display ALL uploaded dashboard images in this section
-- Each image shown with its filename as a caption
-- Use `<img>` tags with `max-width: 100%` for responsive display
-- If images are local files, embed them as base64 data URIs so the report remains self-contained
-- This section serves as the **source reference** — the reader sees exactly what was analyzed
-- Brief one-line description under each image if context is available
+**2. Findings & Insights (5–8 bullets)**
+- Each: **bold headline** + one sentence with a specific number
+- No category tags or colored labels — just clean bullets
+- Max 2 lines per insight
 
-**3. Detailed Summary**
-- The core of the report — **key collated insights across all dashboards/sources**
-- NOT per-dashboard breakdowns — insights are synthesized and themed
-- Group findings by **themes/patterns** (e.g., "Control Effectiveness Gap",
-  "Automation Deficit", "Risk Culture Shift") — not by source file
-- Each insight must be backed up with **supporting charts/plots** (Plotly.js)
-  that visualize the data points behind the finding
-- Use the 4-part framework per insight:
-  - What Happened (quantified, data-cited)
-  - Why It Happened (root cause)
-  - What Should We Do (prescriptive)
-  - What We'll Achieve (expected outcome)
-- Use subsections (h3) for each major theme/insight group
-- Every subsection should have at least one Plotly chart supporting the narrative
+**3. Recommendations (3–5 bullets)**
+- Each: **bold action** + one sentence with expected impact
+- No priority emojis or colored bullets — just clean text
+- Most urgent first, max 2 lines each
 
-**4. Next Steps**
-- Forward-looking narrative describing the path from current state to target state
-- Written as **prose paragraphs**, NOT as an action-item table
-- Sequenced by time horizon: Immediate (0-30 days) → Short-Term (30-90 days) → Medium-Term (90d-6mo) → Long-Term (6-12mo) → Monitoring & Reassessment
-- Each time horizon explains WHAT to do, WHY it's sequenced that way, and HOW it builds on the previous step
-- Tone: strategic and consultative — like a senior advisor laying out a roadmap, not a task list
-- End with monitoring cadence and leading indicators to track
-- This is NOT an action-item table — no priority columns, no owner columns, no grid format
-- Think "where do we go from here" not "here are 9 tasks to assign"
+Also provide a brief chat summary (Executive Summary + top 3 insights) alongside the file.
 
-### What NOT to do
-- Do NOT create per-source/per-dashboard sections in Detailed Summary (no "Dashboard 1 Findings", "Dashboard 2 Findings")
-- Do NOT dump raw data tables without insight narrative
-- Do NOT include methodology/context as a separate section (fold into Executive Summary if needed)
-- Do NOT add sections beyond these 4 (keep it tight and focused)
-- Do NOT call the last section "Action Items" — it is always "Next Steps"
-- Do NOT write Next Steps as a table of action items — use prose paragraphs grouped by time horizon
+## Mode 2: Multiple Inputs → HTML Report
 
-### Chart Requirements
-- Minimum 3 Plotly charts in the Detailed Summary (Section 3)
-- Charts must **support specific insights** — not decorative
-- Use the MuSigma palette: `P=["#4E79A7","#59A14F","#F28E2B","#E15759","#BAB0AC"]`
-- Include value annotations on all charts
+When user provides TWO OR MORE datasets, dashboards, or images:
 
-## Legacy Report Structure (stdout text output only)
+Generate `Business_Insight_Report.html` using `assets/report_template.html`.
 
-For non-HTML text output (stdout from pipeline), the original structure is preserved:
+### Report Structure
 
-1. **Executive Summary** — Board-ready synthesis
-2. **Per-Source Findings** — Image-by-image detailed analysis
-3. **Cross-Cutting Patterns** — Connections across sources
-4. **Prioritized Action Plan** — Owner, timeline, expected outcome
-5. **Context & Methodology** — Domain context, assumptions
+For N inputs, the report has N+2 sections:
 
-## Report Naming Convention
+**First section — Executive Summary:**
+1. **Executive Summary** — 3–5 sentence overview of all inputs combined. Highlight the most critical finding, set context, and preview key themes. Written as a paragraph, not bullets.
 
-All generated reports follow: `<report-name>-v<YY.MM.VV>.html`
+**Section per input (repeated for each):**
+1. **Input title** — name/description of the dataset or dashboard
+2. **Findings & Insights** — 5–8 bullet insights specific to this input
+3. **Recommendations** — 3–5 recommendations specific to this input
 
-- **YY** = 2-digit year (e.g., 26)
-- **MM** = 2-digit month (e.g., 03)
-- **VV** = incremental version (01, 02, 03…)
-- Example: `walmart-safety-insights-v26.03.01.html`
-- VV increments on every regeneration of the same report artifact
+**Final section — Cross-Comparison:**
+1. **Comparative Insights** — 5–8 bullets highlighting differences, correlations, contradictions, and patterns ACROSS all inputs
+2. **Comparative Recommendations** — 3–5 actions that only emerge from looking at the data together
 
-## Command
+### Cross-Comparison Lenses
 
-Run the pipeline via exec (paths are relative to workspace root):
+When comparing multiple inputs, specifically look for:
+- **Contradictions** — where one dataset says X but another says the opposite
+- **Amplifications** — where multiple datasets reinforce the same signal
+- **Gaps** — metrics present in one but missing in another
+- **Temporal shifts** — same metric changing over time across datasets
+- **Segment differences** — same metric varying across different cuts (region, product, channel)
+- **Hidden correlations** — patterns only visible when datasets are combined
 
-```bash
-python3 scripts/insight_generator/pipeline.py <input_path>
-```
+### HTML Format Rules
+- Use the Mu Sigma branded header (logo + maroon title + author + date) from the template
+- Light-mode professional theme
+- Each input section has a clear heading with a colored left border
+- Cross-comparison section has a distinct highlight background
+- No category tags (Trend/Risk/Opportunity/Anomaly) on insights — just clean bullets
+- No colored emoji bullets on recommendations — just clean text
+- Keep insights crisp — same 2-line max rule as chat mode
+- No charts, no graphs, no Plotly — pure text
 
-Multiple sources (comma-separated — auto-detects correlation):
+## Workflow (both modes)
 
-```bash
-python3 scripts/insight_generator/pipeline.py "<path1>,<path2>,<path3>"
-```
+### Phase 1: Data Ingestion
 
-Image with Vision API response:
+1. **Identify inputs** — count how many files/images. Determines Mode 1 or Mode 2.
+2. **For each input:**
+   - **CSV**: Run `python3 scripts/analyze_data.py <input.csv> <output.json>`, then custom pandas queries.
+   - **PDF**: Extract text/tables with `pdfplumber` or vision.
+   - **Dashboard / Image**: Use vision to read every visible metric, trend, label, and signal.
+3. **Deep exploration per input** — distributions, top-N, time trends, cross-tabs, correlations, data quality.
+4. **Cross-input analysis (Mode 2 only)** — compare key metrics across inputs, look for the comparison lenses above.
 
-```bash
-python3 scripts/insight_generator/pipeline.py <image_path> --vision-response <response_file>
-```
+### Phase 2: Insight Generation
 
-## Context Enrichment (Automatic)
+For every finding:
+- **So What?** — business meaning
+- **Quantified Impact** — dollar or percentage
+- **Action** — what to do
 
-Before generating insights, the pipeline:
-1. **Domain Detection** — Identifies business domain from content
-2. **Benchmark Framing** — Applies industry-standard KPI benchmarks
-3. **Cross-Source Threading** — Finds connections between multiple inputs
-4. **Stakeholder Framing** — Tailors language for CXO/board consumption
+Distill into crisp bullets. No paragraphs.
 
-## Output Behaviour
+### Phase 3: Delivery
 
-- Pipeline prints ONLY the final formatted insights to stdout
-- All operational logs are suppressed
-- **CRITICAL: Relay pipeline output EXACTLY as printed — do NOT rephrase**
-- The 4-part structure must be preserved verbatim
+- **Mode 1**: Save `Business_Insight_Report.html`, share path, and provide a brief chat summary (Executive Summary + top 3 insights).
+- **Mode 2**: Save `Business_Insight_Report.html`, share path, and provide a brief chat summary (top 3 cross-comparison insights).
 
-## HTML Report Generation
+## File Reference
 
-When the user wants an HTML report:
-→ Use the **`report_generatror`** skill with the same input data.
-→ **MUST follow the 3-section structure above** (Executive Summary → Detailed Summary → Action Items).
-→ The `--export` flag on this pipeline is deprecated.
-
-## Supported Input Formats
-
-| Format | Extensions | Ingestion Method |
-|---|---|---|
-| CSV | .csv | pandas read_csv |
-| Excel | .xlsx .xls | pandas read_excel |
-| PDF | .pdf | pdfplumber + image extraction |
-| Image | .png .jpg .jpeg | pytesseract OCR + LLM Vision |
-| HTML Report | .html | BeautifulSoup parsing |
-| Markdown | .md | Section/table/metric extraction |
-| PowerPoint | .pptx .ppt | python-pptx text/table extraction |
-| Tableau | .twb .twbx | XML parsing for dashboards/worksheets |
-| Power BI | .pbix | ZIP extraction for pages/tables/measures |
-
-## Insight Framework
-
-Every finding follows:
-- **WHAT HAPPENED** — Specific, quantified observation with data evidence
-- **WHY IT HAPPENED** — Root cause with causal chain, not speculation
-- **WHAT SHOULD WE DO** — Prescriptive action with owner, timeline, dependencies
-- **WHAT WE'LL ACHIEVE** — Quantified expected outcome with confidence level
-
-## Workspace Paths (all relative to workspace root)
-
-- Scripts: `scripts/insight_generator/`
-- Input staging: `data/dashboards/`
-- Data folders: `data/`
-- Reports output: `reports/`
-- Temp files: `temp/`
-
-## Dependencies
-
-Python: pandas, numpy, matplotlib, seaborn, scikit-learn, scipy, openpyxl,
-pdfplumber, pytesseract, Pillow, beautifulsoup4, requests, python-pptx, lxml
-System: tesseract-ocr
+| File | Purpose | When to read |
+|------|---------|-------------|
+| `scripts/analyze_data.py` | Automated CSV analysis | Always for CSV inputs |
+| `references/style-guide.md` | CSS theme specification | When building HTML |
+| `assets/report_template.html` | HTML template with Mu Sigma header | When assembling report |
