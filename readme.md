@@ -10,6 +10,7 @@ A curated collection of OpenClaw skills for the Digital Employee platform. Each 
 |---|-------|-----------|-------------|
 | 1 | **MuSigma HTML Report Generator** | `report_generatror/` | Generate structured, interactive HTML analytics reports using the MuSigma canonical template. Supports EDA summaries, business analytics, decision science reports, and dataset-based insights. |
 | 2 | **Connected Insights** | `connected-insights/` | CXO-grade insight engine that analyses dashboards, reports, and datasets to produce prescriptive, business-standard findings using the framework: *What Happened → Why It Happened → What Should We Do → What We'll Achieve*. |
+| 3 | **AutoTest Engineer** | `autotest-engineer/` | Automated testing skill — analyzes a project, detects language/framework, generates unit/integration/edge-case tests, executes them, optionally runs SonarQube analysis, and produces a structured HTML report. |
 
 ---
 
@@ -23,6 +24,11 @@ A curated collection of OpenClaw skills for the Digital Employee platform. Each 
 - CSV, XLSX, PDF, images (PNG/JPG), HTML reports, Markdown, PPTX
 - Tableau (.twb/.twbx), Power BI (.pbix)
 - Outputs structured executive-grade insight reports
+
+### AutoTest Engineer
+- Any project in Python, JavaScript/TypeScript, Java, Go, Ruby, C#, Rust, PHP
+- Auto-detects language, framework, and appropriate test framework
+- Generates tests, runs them, and produces HTML reports with optional SonarQube integration
 
 ---
 
@@ -106,6 +112,7 @@ Each skill's `README.md` contains integration instructions for `SOUL.md` and `AG
 
 - [`report_generatror/SKILL.md`](report_generatror/SKILL.md)
 - [`connected-insights/README.md`](connected-insights/README.md)
+- [`autotest-engineer/SKILL.md`](autotest-engineer/SKILL.md)
 
 ---
 
