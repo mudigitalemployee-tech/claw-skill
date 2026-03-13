@@ -1,193 +1,124 @@
 # Digital Employee Skill Repository
 
-This repository contains a custom skill for Digital Employee.
-
-Use this guide to:
-- Clone this repository to your local machine
-- Copy the cloned skill folder into your OpenClaw skills workspace
+A curated collection of OpenClaw skills for the Digital Employee platform. Each skill is a self-contained module that extends the agent's capabilities.
 
 ---
 
-## List of Skills
+## Skills
 
-### 1) Skill Name
-`report_generatror`
+| # | Skill | Directory | Description |
+|---|-------|-----------|-------------|
+| 1 | **MuSigma HTML Report Generator** | `report_generatror/` | Generate structured, interactive HTML analytics reports using the MuSigma canonical template. Supports EDA summaries, business analytics, decision science reports, and dataset-based insights. |
+| 2 | **Connected Insights** | `connected-insights/` | CXO-grade insight engine that analyses dashboards, reports, and datasets to produce prescriptive, business-standard findings using the framework: *What Happened → Why It Happened → What Should We Do → What We'll Achieve*. |
 
-### Why it is used
-- Used to generate structured, interactive HTML analytics reports using the MuSigma canonical template.
-- Useful for EDA summaries, business analytics reports, decision science reports, and dataset-based insights.
+---
 
-### Prerequisites for this skill
-- OpenClaw skills directory available at `~/.openclaw/workspace/skills`
-- Access to the skill files in `report_generatror/`
-- Template files available:
-	- `report_generatror/assets/template.html`
-	- `report_generatror/references/template-guide.md`
-- Data source available for report creation (CSV/Excel/JSON, etc.)
+## Supported Input Formats
+
+### Report Generator
+- CSV, Excel, JSON, or any tabular data source
+- Outputs self-contained HTML reports with Plotly charts and DataTables
+
+### Connected Insights
+- CSV, XLSX, PDF, images (PNG/JPG), HTML reports, Markdown, PPTX
+- Tableau (.twb/.twbx), Power BI (.pbix)
+- Outputs structured executive-grade insight reports
 
 ---
 
 ## Prerequisites
 
-Before you begin, make sure you have:
-
-- `git` installed
-- Access to this repository URL
-- OpenClaw installed with the skills directory available at:
+- **Git** installed ([verify](https://git-scm.com/): `git --version`)
+- Access to this repository
+- **OpenClaw** installed with the skills directory at:
 
 ```bash
-~/.openclaw/workspace/skills
-```
-
-To verify Git installation:
-
-```bash
-git --version
+~/.openclaw/workspace/skills/
 ```
 
 ---
 
-## Step 1: Clone the repository locally
+## Quick Start
 
-1. Open a terminal.
-2. Move to any local folder where you want to keep the repository.
-
-```bash
-cd <YOUR_PREFERRED_PATH>
-```
-
-3. Clone the repository:
+### 1. Clone the repository
 
 ```bash
-git clone https://gitlab.ird.mu-sigma.com/digital-employee/skill-repository/openclaw_skill.git
+git clone git@github.com:mudigitalemployee-tech/claw-skill.git
+cd claw-skill
 ```
 
-4. Enter the cloned folder:
+### 2. Copy skill(s) into OpenClaw
 
-```bash
-cd openclaw_skill
-```
-
-5. Confirm files are present:
-
-```bash
-ls
-```
-
-You should see the repository files and one or more skill directories (for example, folders that contain a `SKILL.md` file).
-
----
-
-## Step 2: Copy skill folder(s) into OpenClaw skills path
-
-OpenClaw skill folders should be copied to:
-
-```bash
-~/.openclaw/workspace/skills
-```
-
-### Option A (recommended): copy one or more skill folders only
-
-From inside your cloned repository, copy each skill folder (a skill folder usually contains `SKILL.md`) to the OpenClaw skills directory.
-
-Example (single skill folder):
+Copy individual skills:
 
 ```bash
 cp -r report_generatror ~/.openclaw/workspace/skills/
+cp -r connected-insights ~/.openclaw/workspace/skills/
 ```
 
-Example (single skill folder using relative path from repo root):
-
-```bash
-cp -r ./report_generatror ~/.openclaw/workspace/skills/
-```
-
-Example (multiple skill folders):
+Or copy all skills at once:
 
 ```bash
 for d in */; do [ -f "$d/SKILL.md" ] && cp -r "$d" ~/.openclaw/workspace/skills/; done
 ```
 
-### Option B: copy the full cloned repository (only if your setup requires it)
-
-From the parent directory of the cloned repository:
+### 3. Verify installation
 
 ```bash
-cp -r <CLONED_REPO_FOLDER> ~/.openclaw/workspace/skills/
+ls ~/.openclaw/workspace/skills/
 ```
 
-Use this option only if your OpenClaw setup expects the entire repository folder instead of individual skill folders.
+You should see `report_generatror/` and `connected-insights/` listed.
 
 ---
 
-## Step 3: Verify the copied skill
+## Skill Structure
 
-Run:
+Each skill follows the OpenClaw skill convention:
 
-```bash
-ls ~/.openclaw/workspace/skills
 ```
-
-You should see:
-
-- `report_generatror` (if you used Option A)
-- or `claw-skill` (if you used Option B)
-
-For deeper verification:
-
-```bash
-ls ~/.openclaw/workspace/skills/report_generatror
+<skill-name>/
+├── SKILL.md              # Skill definition and metadata
+├── assets/               # Templates, static files
+├── references/           # Guides, examples
+├── scripts/              # Executable pipelines (if any)
+└── README.md             # Skill-specific documentation
 ```
-
-Expected structure includes:
-
-- `SKILL.md`
-- `assets/`
-- `references/`
 
 ---
 
-## Step 4: Update skill after future changes
+## Updating Skills
 
-If you make updates in this repository later, copy again to refresh the installed skill:
+After pulling new changes from the repo, re-copy the updated skill(s):
 
 ```bash
+cd claw-skill
+git pull
 cp -r report_generatror ~/.openclaw/workspace/skills/
+cp -r connected-insights ~/.openclaw/workspace/skills/
 ```
 
-If prompted to overwrite, confirm as needed.
+---
+
+## Integration
+
+Each skill's `README.md` contains integration instructions for `SOUL.md` and `AGENTS.md`. Refer to:
+
+- [`report_generatror/SKILL.md`](report_generatror/SKILL.md)
+- [`connected-insights/README.md`](connected-insights/README.md)
 
 ---
 
 ## Troubleshooting
 
-### `No such file or directory` for OpenClaw path
-
-Create the directory first:
-
-```bash
-mkdir -p ~/.openclaw/workspace/skills
-```
-
-Then run the copy command again.
-
-### Permission denied
-
-Check ownership/permissions of the OpenClaw workspace directory.
-
-### Wrong repository URL
-
-If clone fails, verify your repository URL and access permissions.
+| Issue | Fix |
+|-------|-----|
+| `No such file or directory` for skills path | `mkdir -p ~/.openclaw/workspace/skills` |
+| Permission denied | Check ownership of `~/.openclaw/workspace/` |
+| Clone fails | Verify repo URL and SSH key / access permissions |
 
 ---
 
-## Quick Copy Commands
+## Repository
 
-Use the following commands:
-
-```bash
-git clone https://gitlab.ird.mu-sigma.com/digital-employee/skill-repository/openclaw_skill.git
-cd openclaw_skill
-cp -r report_generatror ~/.openclaw/workspace/skills/
-ls ~/.openclaw/workspace/skills
-```
+- **GitHub:** [mudigitalemployee-tech/claw-skill](https://github.com/mudigitalemployee-tech/claw-skill)
