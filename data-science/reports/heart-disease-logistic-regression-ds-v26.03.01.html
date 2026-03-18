@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>heart-disease-logistic-regression - Data Science Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"></script>
+
+<style type="text/css">
+/* ===== Base Layout (matching R Markdown output) ===== */
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.42857;
+  color: #333;
+  background: #fff;
+  counter-reset: h2counter;
+}
+
+div.container-fluid.main-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== TOC Sidebar ===== */
+#TOC {
+  position: fixed;
+  top: 0;
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: auto;
+  overflow-y: auto;
+  margin: 25px 0 20px 0;
+  padding: 0;
+  background: #fff;
+  z-index: 1000;
+}
+
+#TOC ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+#TOC .tocify-subheader {
+  display: none;
+}
+
+#TOC .list-group-item {
+  display: block;
+  padding: 4px 15px;
+  line-height: 30px;
+  border: 0;
+  border-radius: 0;
+  background-color: inherit;
+  color: #000;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  position: relative;
+}
+
+#TOC .tocify-subheader .list-group-item {
+  padding-left: 25px;
+  font-size: 12.6px;
+}
+
+#TOC .tocify-subheader .tocify-subheader .list-group-item {
+  padding-left: 35px;
+  font-size: 11.9px;
+}
+
+#TOC .list-group-item:hover {
+  background-color: #f5f5f5;
+  text-decoration: none;
+}
+
+#TOC .list-group-item.active,
+#TOC .list-group-item.active:hover,
+#TOC .list-group-item.active:focus {
+  color: #fff;
+  background-color: #337ab7;
+  border-color: #337ab7;
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+/* ===== Auto-numbered Headings ===== */
+.toc-content { counter-reset: h2counter; }
+
+.toc-content h2 {
+  font-size: 30px;
+  font-weight: 400;
+  color: #333;
+  margin-top: 30px;
+  counter-increment: h2counter;
+  counter-reset: h3counter;
+}
+
+.toc-content h2::before {
+  content: counter(h2counter) ". ";
+  font-weight: 500;
+}
+
+.toc-content h3 {
+  font-size: 24px;
+  font-weight: 400;
+  color: #333;
+  margin-top: 22px;
+  counter-increment: h3counter;
+}
+
+.toc-content h3::before {
+  content: counter(h2counter) "." counter(h3counter) " ";
+  font-weight: 500;
+}
+
+/* Exclude header title from numbering */
+.report-header ~ h1,
+.report-header ~ h2 { /* handled by counter */ }
+
+h1.title { font-size: 38px; color: #800000; margin-top: 0; }
+h1 { font-size: 34px; }
+h4, .h4 { font-size: 18px; }
+
+/* ===== Sections ===== */
+.section.level2 { margin-top: 20px; }
+.section.level3 { margin-top: 14px; }
+
+/* ===== Tables ===== */
+table { margin: 14px auto; border-collapse: collapse; border: none; font-size: 12px; color: #000; }
+thead { border-bottom: 1px solid #000; vertical-align: bottom; }
+tr, th, td { text-align: right; vertical-align: middle; padding: 0.5em 0.8em; border: none; }
+th { font-weight: bold; }
+td:first-child, th:first-child { text-align: left; }
+tbody tr:nth-child(odd) { background: #f5f5f5; }
+tbody tr:hover { background: rgba(66,165,245,0.15); }
+
+/* ===== Charts ===== */
+.chart-container { margin: 15px 0; width: 100%; }
+
+/* ===== Header ===== */
+.report-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 0 18px 0;
+  margin-bottom: 20px;
+}
+.report-header .logo { flex: 0 0 120px; }
+.report-header .logo img { height: 90px; }
+.report-header .title-block { flex: 1; text-align: center; }
+.report-header .title-block .title-text { font-size: 32px; font-weight: 500; color: #800000; }
+.report-header .title-block .author-date { font-size: 18px; color: #666; margin-top: 4px; }
+.report-header .spacer { flex: 0 0 120px; }
+
+/* ===== Footer ===== */
+.report-footer {
+  margin-top: 60px;
+  padding: 6px 0 14px 0;
+  border-top: 2px solid #800000;
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+.report-footer .footer-subtitle {
+  margin-top: 0;
+  font-size: 13px;
+  color: #444;
+  font-style: italic;
+}
+
+/* ===== Print ===== */
+@media print {
+  #TOC { display: none; }
+  .col-sm-8 { width: 100%; }
+  .toc-content { padding-left: 0; padding-right: 0; }
+}
+
+.table-scroll-wrapper { overflow-x: auto; max-width: 100%; margin: 12px 0; }
+.chart-conclusion { font-style: italic; font-size: 13px; color: #555;
+  border-left: 3px solid #4E79A7; padding: 6px 12px; margin: 8px 0 16px; }
+tbody { counter-reset: rownum; }
+.sno-table tbody tr td:first-child::before { counter-increment: rownum; content: counter(rownum); }
+</style>
+</head>
+
+<body>
+<div class="container-fluid main-container">
+<div class="row">
+
+<div class="col-xs-12 col-sm-4 col-md-3">
+  <div id="TOC"></div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+<div class="report-header">
+  <div class="logo">
+    <img src="http://upload.wikimedia.org/wikipedia/en/0/0c/Mu_Sigma_Logo.jpg" alt="Mu Sigma"/>
+  </div>
+  <div class="title-block">
+    <div class="title-text">heart-disease-logistic-regression - Data Science Report</div>
+    <div class="author-date"><b>Author:</b> Ved &nbsp;&nbsp;|&nbsp;&nbsp; <b>Version:</b> 26.03.01 &nbsp;&nbsp;|&nbsp;&nbsp; <b>Date:</b> 2026-03-18 23:37</div>
+  </div>
+  <div class="spacer"></div>
+</div>
+
+<script>
+var P=["#4E79A7", "#59A14F", "#F28E2B", "#E15759", "#BAB0AC"], H=370;
+var L={font:{family:'"Helvetica Neue",Helvetica,Arial,sans-serif',size:11},paper_bgcolor:'#fff',plot_bgcolor:'#fff',margin:{t:50,b:60,l:60,r:30},xaxis:{gridcolor:'#E5E5E5'},yaxis:{gridcolor:'#E5E5E5'}};
+</script>
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This report presents the results of a comprehensive <strong>classification</strong> analysis
+for the <strong>heart-disease-logistic-regression</strong> project, conducted using the Mu Sigma modular
+Data Science pipeline. The analysis covers <strong>1 target variable</strong>
+, applying machine learning and
+statistical models to generate actionable forecasts.</p>
+
+
+
+<div id="intro-methodology" class="section level3">
+<h3>Methodology</h3>
+<ol><li><strong>Phase 1 - EDA &amp; Preprocessing:</strong> Data profiling, feature engineering, outlier detection, train/test split</li><li><strong>Phase 2 - Model Selection &amp; Validation:</strong> Multi-model training, cross-validation, hyperparameter tuning</li><li><strong>Phase 3 - Execution &amp; Insights:</strong> Final inference on held-out test set, drift analysis, business insight generation</li></ol>
+</div>
+</div>
+
+<div id="data-overview" class="section level2">
+<h2>Data Overview</h2>
+<p>The dataset comprises <strong>303 observations</strong> across <strong>14 columns</strong>.
+2 columns have missing values.</p>
+
+<div id="column-schema" class="section level3">
+<h3>Column Schema</h3>
+<table class="sortable">
+<thead><tr><th>Column</th><th>Dtype</th><th>Type</th><th>Unique</th><th>Missing %</th></tr></thead>
+<tbody>
+<tr><td>age</td><td>int64</td><td>numeric</td><td>41</td><td>0.0%</td></tr>
+<tr><td>sex</td><td>int64</td><td>numeric</td><td>2</td><td>0.0%</td></tr>
+<tr><td>cp</td><td>int64</td><td>numeric</td><td>4</td><td>0.0%</td></tr>
+<tr><td>trestbps</td><td>int64</td><td>numeric</td><td>50</td><td>0.0%</td></tr>
+<tr><td>chol</td><td>int64</td><td>numeric</td><td>152</td><td>0.0%</td></tr>
+<tr><td>fbs</td><td>int64</td><td>numeric</td><td>2</td><td>0.0%</td></tr>
+<tr><td>restecg</td><td>int64</td><td>numeric</td><td>3</td><td>0.0%</td></tr>
+<tr><td>thalach</td><td>int64</td><td>numeric</td><td>91</td><td>0.0%</td></tr>
+<tr><td>exang</td><td>int64</td><td>numeric</td><td>2</td><td>0.0%</td></tr>
+<tr><td>oldpeak</td><td>float64</td><td>numeric</td><td>40</td><td>0.0%</td></tr>
+<tr><td>slope</td><td>int64</td><td>numeric</td><td>3</td><td>0.0%</td></tr>
+<tr><td>ca</td><td>float64</td><td>numeric</td><td>4</td><td>1.3%</td></tr>
+<tr><td>thal</td><td>float64</td><td>numeric</td><td>3</td><td>0.7%</td></tr>
+<tr><td>target</td><td>int64</td><td>numeric</td><td>2</td><td>0.0%</td></tr>
+</tbody>
+</table>
+
+<p class="chart-conclusion"><em>The dataset contains 14 features (14 numeric, 0 categorical). </em></p>
+</div>
+
+<div id="missing-values" class="section level3">
+<h3>Missing Values</h3>
+<table>
+<thead><tr><th>Column</th><th>Missing %</th></tr></thead>
+<tbody>
+<tr><td>ca</td><td>1.3%</td></tr>
+<tr><td>thal</td><td>0.7%</td></tr>
+</tbody>
+</table>
+
+<p class="chart-conclusion"><em>2 columns contain missing values. Missing data will be handled during preprocessing via forward-fill/backward-fill for time series or median imputation for cross-sectional data.</em></p>
+</div>
+</div>
+
+<div id="data-wrangling" class="section level2">
+<h2>Data Wrangling</h2>
+
+<div id="datetime-conversion" class="section level3">
+<h3>DateTime Conversion</h3>
+<p>No datetime columns detected.</p>
+</div>
+
+<div id="derived-features" class="section level3">
+<h3>Derived Features</h3>
+<p>Temporal features extracted from datetime columns:</p>
+<ul><li>None</li></ul>
+<p>These derived features are used for modeling but excluded from EDA visualizations to avoid redundancy.</p>
+</div>
+
+<div id="cleaning-steps" class="section level3">
+<h3>Cleaning Steps Applied</h3>
+<ul>
+<li>Numeric missing values imputed with column median</li>
+<li>Categorical missing values imputed with most frequent value</li>
+<li>Numeric features standardized (zero mean, unit variance)</li>
+<li>Categorical features one-hot encoded</li>
+</ul>
+</div>
+</div>
+
+<div id="eda" class="section level2">
+<h2>Exploratory Data Analysis</h2>
+<p>This section explores the dataset through distribution analysis, correlations, and outlier detection.
+Date-derived features (none) are excluded from these visualizations.</p>
+
+<div id="feature-distributions" class="section level3">
+<h3>Feature Distributions</h3>
+<div class="chart-container" id="eda-chart-0" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('eda-chart-0',[{"type": "bar", "x": [29.8, 31.400000000000002, 33.0, 34.599999999999994, 36.2, 37.8, 39.400000000000006, 41.0, 42.599999999999994, 44.2, 45.8, 47.400000000000006, 49.0, 50.6, 52.2, 53.8, 55.400000000000006, 57.0, 58.6, 60.2, 61.8, 63.400000000000006, 65.0, 66.60000000000001, 68.2, 69.8, 71.4, 73.0, 74.60000000000001, 76.2], "y": [1, 0, 0, 6, 0, 4, 7, 10, 16, 11, 15, 12, 5, 19, 13, 24, 19, 17, 33, 12, 19, 19, 8, 16, 4, 7, 3, 0, 1, 2], "marker": {"color": "#4E79A7"}, "name": "age"}],$.extend(true,{},L,{"title": {"text": "Distribution: age", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "age", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Count", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+<p class="chart-conclusion"><em>The age distribution shows 303 complete observations with a mean of 54.4 years and median of 56.0 years, ranging from 29 to 77 years with a standard deviation of 9.0 years. The slight negative skewness (-0.21) and negative kurtosis (-0.52) indicate the distribution is approximately normal but slightly left-skewed with lighter tails than a normal distribution. This well-behaved, complete dataset with no missing values suggests age can be used directly in modeling without transformation, though the concentration around middle age (mean/median ~54-56) may limit the model's generalizability to younger populations under 30.</em></p>
+<div class="chart-container" id="eda-chart-1" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('eda-chart-1',[{"type": "bar", "x": [0.016666666666666666, 0.05, 0.08333333333333334, 0.11666666666666667, 0.15, 0.18333333333333335, 0.21666666666666667, 0.25, 0.2833333333333333, 0.31666666666666665, 0.35, 0.3833333333333333, 0.4166666666666667, 0.45, 0.48333333333333334, 0.5166666666666666, 0.55, 0.5833333333333333, 0.6166666666666667, 0.6499999999999999, 0.6833333333333333, 0.7166666666666666, 0.75, 0.7833333333333333, 0.8166666666666667, 0.8500000000000001, 0.8833333333333333, 0.9166666666666667, 0.95, 0.9833333333333334], "y": [97, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 206], "marker": {"color": "#4E79A7"}, "name": "sex"}],$.extend(true,{},L,{"title": {"text": "Distribution: sex", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "sex", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Count", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+<p class="chart-conclusion"><em>The sex variable shows a binary distribution with values ranging from 0.0 to 1.0, where the mean of 0.68 and median of 1.0 indicate that approximately 68% of the 303 observations are coded as 1 (likely male or female depending on encoding). The negative skewness of -0.77 and negative kurtosis of -1.41 confirm this is a heavily imbalanced binary distribution with most values concentrated at 1.0. This imbalance suggests potential sampling bias toward one gender category, which could impact model performance and generalizability, requiring careful consideration of class weights or stratified sampling techniques during model development.</em></p>
+<div class="chart-container" id="eda-chart-2" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('eda-chart-2',[{"type": "bar", "x": [1.05, 1.15, 1.25, 1.35, 1.45, 1.55, 1.6500000000000001, 1.75, 1.85, 1.95, 2.05, 2.1500000000000004, 2.25, 2.35, 2.45, 2.55, 2.6500000000000004, 2.75, 2.85, 2.95, 3.05, 3.1500000000000004, 3.25, 3.3500000000000005, 3.45, 3.55, 3.6500000000000004, 3.75, 3.8500000000000005, 3.95], "y": [23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 86, 0, 0, 0, 0, 0, 0, 0, 0, 144], "marker": {"color": "#4E79A7"}, "name": "cp"}],$.extend(true,{},L,{"title": {"text": "Distribution: cp", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "cp", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Count", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+<p class="chart-conclusion"><em>The 'cp' variable shows a distribution with 303 observations ranging from 1.0 to 4.0, with a mean of 3.16 and median of 3.0, indicating values cluster toward the higher end of the scale. The negative skewness (-0.84) confirms a left-skewed distribution where most observations concentrate at higher values, while the negative kurtosis (-0.40) suggests a relatively flat distribution compared to normal. This pattern indicates the variable likely represents categorical levels or ordinal ratings where higher categories are more prevalent, which may require careful encoding or stratification strategies during model development to handle the class imbalance effectively.</em></p>
+<div class="chart-container" id="eda-chart-3" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('eda-chart-3',[{"type": "bar", "x": [95.76666666666667, 99.3, 102.83333333333333, 106.36666666666666, 109.89999999999999, 113.43333333333334, 116.96666666666667, 120.5, 124.03333333333333, 127.56666666666666, 131.1, 134.63333333333333, 138.16666666666669, 141.7, 145.23333333333335, 148.76666666666665, 152.3, 155.83333333333331, 159.36666666666667, 162.89999999999998, 166.43333333333334, 169.96666666666667, 173.5, 177.03333333333333, 180.56666666666666, 184.1, 187.63333333333333, 191.16666666666666, 194.7, 198.23333333333335], "y": [2, 5, 3, 10, 19, 13, 8, 41, 18, 16, 44, 14, 12, 35, 9, 19, 6, 2, 12, 1, 1, 4, 2, 2, 3, 0, 0, 1, 0, 1], "marker": {"color": "#4E79A7"}, "name": "trestbps"}],$.extend(true,{},L,{"title": {"text": "Distribution: trestbps", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "trestbps", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Count", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+<p class="chart-conclusion"><em>The trestbps (resting blood pressure) distribution shows 303 complete observations with a mean of 131.69 mmHg and median of 130.0 mmHg, ranging from 94.0 to 200.0 mmHg with a standard deviation of 17.60. The distribution exhibits moderate positive skewness (0.706) and kurtosis (0.880), indicating a right tail with some elevated blood pressure readings extending beyond the central tendency. This suggests the presence of patients with hypertensive conditions in the dataset, which could serve as an important predictive feature for cardiovascular risk modeling and may require careful handling of outliers during model development.</em></p>
+<div class="chart-container" id="eda-chart-4" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('eda-chart-4',[{"type": "bar", "x": [133.3, 147.89999999999998, 162.5, 177.10000000000002, 191.7, 206.3, 220.89999999999998, 235.5, 250.1, 264.7, 279.3, 293.9, 308.5, 323.09999999999997, 337.7, 352.3, 366.9, 381.5, 396.1, 410.7, 425.29999999999995, 439.9, 454.5, 469.1, 483.7, 498.29999999999995, 512.9, 527.5, 542.0999999999999, 556.7], "y": [2, 3, 7, 14, 20, 38, 32, 37, 37, 31, 22, 16, 20, 11, 5, 2, 1, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], "marker": {"color": "#4E79A7"}, "name": "chol"}],$.extend(true,{},L,{"title": {"text": "Distribution: chol", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "chol", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Count", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+<p class="chart-conclusion"><em>The cholesterol distribution shows 303 complete observations with a mean of 246.7 mg/dL and median of 241.0 mg/dL, spanning from 126.0 to 564.0 mg/dL with a standard deviation of 51.8. The positive skewness of 1.14 and high kurtosis of 4.49 indicate a right-tailed distribution with heavy tails, suggesting the presence of patients with notably elevated cholesterol levels. This distribution pattern implies potential outliers or subpopulations with extreme values that may require log transformation or robust modeling techniques to ensure accurate predictions and avoid bias toward high-risk cases.</em></p>
+<div class="chart-container" id="eda-chart-5" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('eda-chart-5',[{"type": "bar", "x": [0.016666666666666666, 0.05, 0.08333333333333334, 0.11666666666666667, 0.15, 0.18333333333333335, 0.21666666666666667, 0.25, 0.2833333333333333, 0.31666666666666665, 0.35, 0.3833333333333333, 0.4166666666666667, 0.45, 0.48333333333333334, 0.5166666666666666, 0.55, 0.5833333333333333, 0.6166666666666667, 0.6499999999999999, 0.6833333333333333, 0.7166666666666666, 0.75, 0.7833333333333333, 0.8166666666666667, 0.8500000000000001, 0.8833333333333333, 0.9166666666666667, 0.95, 0.9833333333333334], "y": [258, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45], "marker": {"color": "#4E79A7"}, "name": "fbs"}],$.extend(true,{},L,{"title": {"text": "Distribution: fbs", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "fbs", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Count", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+<p class="chart-conclusion"><em>The fbs variable exhibits a highly right-skewed binary distribution (skewness = 1.99) with 85.2% of the 303 observations having a value of 0 and only 14.9% having a value of 1, as evidenced by the mean of 0.148 and median of 0.0. This indicates that fasting blood sugar levels above 120 mg/dl are relatively uncommon in this dataset, representing a clear minority class imbalance. For modeling purposes, this severe imbalance (roughly 6:1 ratio) will likely require techniques such as class weighting, resampling, or threshold adjustment to prevent the model from simply predicting the majority class and ignoring the medically significant minority cases.</em></p>
+<div class="chart-container" id="eda-chart-6" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('eda-chart-6',[{"type": "bar", "x": [0.03333333333333333, 0.1, 0.16666666666666669, 0.23333333333333334, 0.3, 0.3666666666666667, 0.43333333333333335, 0.5, 0.5666666666666667, 0.6333333333333333, 0.7, 0.7666666666666666, 0.8333333333333334, 0.9, 0.9666666666666667, 1.0333333333333332, 1.1, 1.1666666666666665, 1.2333333333333334, 1.2999999999999998, 1.3666666666666667, 1.4333333333333331, 1.5, 1.5666666666666667, 1.6333333333333333, 1.7000000000000002, 1.7666666666666666, 1.8333333333333335, 1.9, 1.9666666666666668], "y": [151, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 148], "marker": {"color": "#4E79A7"}, "name": "restecg"}],$.extend(true,{},L,{"title": {"text": "Distribution: restecg", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "restecg", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Count", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+<p class="chart-conclusion"><em>The restecg variable shows a nearly uniform distribution across its range of 0 to 2, with a mean of 0.99 and median of 1.0, exhibiting very low skewness (0.02) and negative kurtosis (-2.0) indicating a flatter-than-normal distribution. This suggests the three categories of resting electrocardiographic results are relatively balanced in the dataset of 303 observations, with no significant bias toward any particular ECG pattern. The uniform distribution and complete data (0% missing) make this variable well-suited for categorical modeling approaches, though the balanced nature may limit its discriminatory power as a standalone predictor in cardiovascular risk assessment models.</em></p>
+<div class="chart-container" id="eda-chart-7" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('eda-chart-7',[{"type": "bar", "x": [73.18333333333334, 77.55, 81.91666666666666, 86.28333333333333, 90.65, 95.01666666666665, 99.38333333333333, 103.75, 108.11666666666667, 112.48333333333332, 116.85, 121.21666666666667, 125.58333333333331, 129.95, 134.31666666666666, 138.68333333333334, 143.05, 147.41666666666666, 151.7833333333333, 156.14999999999998, 160.51666666666665, 164.88333333333333, 169.25, 173.61666666666667, 177.98333333333332, 182.34999999999997, 186.71666666666664, 191.08333333333331, 195.45, 199.81666666666666], "y": [1, 0, 0, 1, 1, 4, 1, 5, 5, 9, 7, 10, 13, 17, 5, 12, 27, 14, 22, 26, 30, 20, 20, 22, 13, 8, 5, 2, 2, 1], "marker": {"color": "#4E79A7"}, "name": "thalach"}],$.extend(true,{},L,{"title": {"text": "Distribution: thalach", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "thalach", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Count", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+<p class="chart-conclusion"><em>The thalach variable exhibits a slightly left-skewed distribution (skewness = -0.54) with values ranging from 71 to 202 and a mean of 149.61 that falls below the median of 153.0, confirming the negative skew. The distribution is approximately normal with low kurtosis (-0.05), indicating similar tail behavior to a normal distribution, and shows good data quality with no missing values across 303 observations. This near-normal distribution with moderate variability (std = 22.88) suggests standard parametric statistical methods and linear modeling approaches would be appropriate, while the slight left skew indicates most individuals cluster toward higher thalach values with fewer cases at the lower end of the range.</em></p>
+<div class="chart-container" id="eda-chart-8" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('eda-chart-8',[{"type": "bar", "x": [0.016666666666666666, 0.05, 0.08333333333333334, 0.11666666666666667, 0.15, 0.18333333333333335, 0.21666666666666667, 0.25, 0.2833333333333333, 0.31666666666666665, 0.35, 0.3833333333333333, 0.4166666666666667, 0.45, 0.48333333333333334, 0.5166666666666666, 0.55, 0.5833333333333333, 0.6166666666666667, 0.6499999999999999, 0.6833333333333333, 0.7166666666666666, 0.75, 0.7833333333333333, 0.8166666666666667, 0.8500000000000001, 0.8833333333333333, 0.9166666666666667, 0.95, 0.9833333333333334], "y": [204, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 99], "marker": {"color": "#4E79A7"}, "name": "exang"}],$.extend(true,{},L,{"title": {"text": "Distribution: exang", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "exang", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Count", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+<p class="chart-conclusion"><em>The exang variable shows a binary distribution with 32.7% of the 303 observations having a value of 1 (mean = 0.327) and the remainder at 0, exhibiting positive skewness (0.74) indicating the majority class is at the lower value. This represents a moderately imbalanced binary feature where roughly one-third of cases exhibit the positive condition while two-thirds do not. For modeling purposes, this 2:1 class ratio is manageable without requiring specialized imbalanced data techniques, though the variable's binary nature and clear separation suggest it could serve as a strong categorical predictor in classification models.</em></p>
+<div class="chart-container" id="eda-chart-9" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('eda-chart-9',[{"type": "bar", "x": [0.10333333333333333, 0.31, 0.5166666666666666, 0.7233333333333334, 0.9299999999999999, 1.1366666666666667, 1.3433333333333333, 1.55, 1.7566666666666666, 1.9633333333333332, 2.17, 2.376666666666667, 2.583333333333333, 2.79, 2.996666666666667, 3.203333333333333, 3.41, 3.6166666666666663, 3.8233333333333333, 4.029999999999999, 4.236666666666666, 4.443333333333333, 4.65, 4.8566666666666665, 5.0633333333333335, 5.27, 5.476666666666667, 5.683333333333334, 5.890000000000001, 6.096666666666667], "y": [118, 12, 19, 14, 17, 19, 14, 16, 10, 14, 5, 5, 8, 6, 6, 3, 4, 4, 1, 3, 2, 1, 0, 0, 0, 0, 0, 1, 0, 1], "marker": {"color": "#4E79A7"}, "name": "oldpeak"}],$.extend(true,{},L,{"title": {"text": "Distribution: oldpeak", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "oldpeak", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Count", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+<p class="chart-conclusion"><em>The oldpeak variable shows a right-skewed distribution (skewness = 1.27) with values ranging from 0.0 to 6.2, a mean of 1.04, and median of 0.8 across 303 complete observations. The positive skewness and kurtosis of 1.58 indicate the presence of outliers in the upper tail, with most patients clustered around lower values but some exhibiting substantially higher oldpeak measurements. This distribution pattern suggests that logarithmic transformation or outlier treatment may be necessary before modeling to prevent these extreme values from disproportionately influencing model performance and to improve the variable's predictive utility.</em></p>
+<div class="chart-container" id="eda-chart-10" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('eda-chart-10',[{"type": "bar", "x": [1.0333333333333332, 1.1, 1.1666666666666665, 1.2333333333333334, 1.2999999999999998, 1.3666666666666667, 1.4333333333333333, 1.5, 1.5666666666666667, 1.6333333333333333, 1.7, 1.7666666666666666, 1.8333333333333335, 1.9, 1.9666666666666668, 2.033333333333333, 2.0999999999999996, 2.166666666666667, 2.2333333333333334, 2.3, 2.3666666666666663, 2.4333333333333336, 2.5, 2.5666666666666664, 2.6333333333333337, 2.7, 2.7666666666666666, 2.833333333333333, 2.9000000000000004, 2.966666666666667], "y": [142, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 140, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21], "marker": {"color": "#4E79A7"}, "name": "slope"}],$.extend(true,{},L,{"title": {"text": "Distribution: slope", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "slope", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Count", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+<p class="chart-conclusion"><em>The slope variable exhibits a right-skewed distribution (skewness = 0.51) with values ranging from 1.0 to 3.0 and a mean of 1.60 that is notably lower than the median of 2.0, indicating concentration of values in the lower range. The negative kurtosis of -0.63 suggests a flatter distribution with fewer extreme values than a normal distribution, while the relatively low standard deviation of 0.62 indicates moderate variability around the mean. This distribution pattern suggests that most observations cluster around lower slope values with a gradual tail toward higher values, which may require transformation or stratified modeling approaches to handle the asymmetry and ensure robust predictive performance across the full range of slope values.</em></p>
+<div class="chart-container" id="eda-chart-11" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('eda-chart-11',[{"type": "bar", "x": [0.05, 0.15000000000000002, 0.25, 0.35000000000000003, 0.45, 0.55, 0.6500000000000001, 0.75, 0.8500000000000001, 0.95, 1.05, 1.1500000000000001, 1.25, 1.35, 1.4500000000000002, 1.55, 1.6500000000000001, 1.75, 1.85, 1.9500000000000002, 2.05, 2.1500000000000004, 2.25, 2.3500000000000005, 2.45, 2.55, 2.6500000000000004, 2.75, 2.8500000000000005, 2.95], "y": [176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0, 0, 0, 0, 20], "marker": {"color": "#4E79A7"}, "name": "ca"}],$.extend(true,{},L,{"title": {"text": "Distribution: ca", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "ca", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Count", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+<p class="chart-conclusion"><em>The "ca" variable shows a highly right-skewed distribution (skewness = 1.19) with 299 observations ranging from 0 to 3, where the median is 0 but the mean is 0.67, indicating most values concentrate at zero with some higher values pulling the average up. This distribution pattern, combined with low missing data (1.32%), suggests the variable likely represents a count or categorical measure where zero is the most common state. For modeling purposes, this variable may benefit from transformation or binning to handle the skewness, and its concentration at zero makes it a strong candidate for distinguishing between different population segments in predictive models.</em></p>
+<div class="chart-container" id="eda-chart-12" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('eda-chart-12',[{"type": "bar", "x": [3.0666666666666664, 3.2, 3.333333333333333, 3.466666666666667, 3.5999999999999996, 3.7333333333333334, 3.8666666666666667, 4.0, 4.133333333333333, 4.266666666666667, 4.4, 4.533333333333333, 4.666666666666666, 4.800000000000001, 4.933333333333334, 5.066666666666666, 5.199999999999999, 5.333333333333334, 5.466666666666667, 5.6, 5.7333333333333325, 5.866666666666667, 6.0, 6.133333333333333, 6.2666666666666675, 6.4, 6.533333333333333, 6.666666666666666, 6.800000000000001, 6.933333333333334], "y": [166, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 117], "marker": {"color": "#4E79A7"}, "name": "thal"}],$.extend(true,{},L,{"title": {"text": "Distribution: thal", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "thal", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Count", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+<p class="chart-conclusion"><em>The 'thal' variable shows a distribution with 301 observations ranging from 3.0 to 7.0, with a mean of 4.73 and median of 3.0, exhibiting slight positive skewness (0.24) and platykurtic characteristics (kurtosis = -1.92). However, this variable has a critical data quality issue with 66% missing values, making any distributional insights unreliable. The high missingness rate suggests this feature may need to be excluded from modeling or requires sophisticated imputation strategies, as using it in its current state could introduce significant bias and reduce model performance across the remaining 34% of complete cases.</em></p>
+<div class="chart-container" id="eda-chart-13" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('eda-chart-13',[{"type": "bar", "x": [0.016666666666666666, 0.05, 0.08333333333333334, 0.11666666666666667, 0.15, 0.18333333333333335, 0.21666666666666667, 0.25, 0.2833333333333333, 0.31666666666666665, 0.35, 0.3833333333333333, 0.4166666666666667, 0.45, 0.48333333333333334, 0.5166666666666666, 0.55, 0.5833333333333333, 0.6166666666666667, 0.6499999999999999, 0.6833333333333333, 0.7166666666666666, 0.75, 0.7833333333333333, 0.8166666666666667, 0.8500000000000001, 0.8833333333333333, 0.9166666666666667, 0.95, 0.9833333333333334], "y": [164, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 139], "marker": {"color": "#4E79A7"}, "name": "target"}],$.extend(true,{},L,{"title": {"text": "Distribution: target", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "target", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Count", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+<p class="chart-conclusion"><em>The target variable distribution shows a binary outcome (0.0 to 1.0) with a mean of 0.459 across 303 observations, indicating approximately 46% positive cases and 54% negative cases. The distribution exhibits negative kurtosis (-1.99) and slight positive skewness (0.166), suggesting a relatively flat distribution with a minor tail toward positive values. This near-balanced binary target is favorable for classification modeling as it reduces class imbalance concerns, though the slight skewness toward negative cases may require monitoring during model evaluation to ensure adequate performance on both classes.</em></p>
+
+</div>
+
+<div id="correlation-analysis" class="section level3">
+<h3>Correlation Analysis</h3>
+<div class="chart-container" id="corr-heatmap" style="min-height:500px;width:100%;"></div>
+<script>Plotly.newPlot('corr-heatmap',[{"type": "heatmap", "z": [[1.0, -0.098, 0.104, 0.285, 0.209, 0.119, 0.149, -0.394, 0.092, 0.204, 0.162, 0.363, 0.127, 0.223], [-0.098, 1.0, 0.01, -0.064, -0.2, 0.048, 0.022, -0.049, 0.146, 0.102, 0.038, 0.093, 0.381, 0.277], [0.104, 0.01, 1.0, -0.036, 0.072, -0.04, 0.068, -0.334, 0.384, 0.202, 0.152, 0.233, 0.265, 0.414], [0.285, -0.064, -0.036, 1.0, 0.13, 0.175, 0.147, -0.045, 0.065, 0.189, 0.117, 0.099, 0.134, 0.151], [0.209, -0.2, 0.072, 0.13, 1.0, 0.01, 0.171, -0.003, 0.061, 0.047, -0.004, 0.119, 0.014, 0.085], [0.119, 0.048, -0.04, 0.175, 0.01, 1.0, 0.07, -0.008, 0.026, 0.006, 0.06, 0.145, 0.071, 0.025], [0.149, 0.022, 0.068, 0.147, 0.171, 0.07, 1.0, -0.083, 0.085, 0.114, 0.134, 0.128, 0.025, 0.169], [-0.394, -0.049, -0.334, -0.045, -0.003, -0.008, -0.083, 1.0, -0.378, -0.343, -0.386, -0.264, -0.28, -0.417], [0.092, 0.146, 0.384, 0.065, 0.061, 0.026, 0.085, -0.378, 1.0, 0.288, 0.258, 0.146, 0.33, 0.432], [0.204, 0.102, 0.202, 0.189, 0.047, 0.006, 0.114, -0.343, 0.288, 1.0, 0.578, 0.296, 0.341, 0.425], [0.162, 0.038, 0.152, 0.117, -0.004, 0.06, 0.134, -0.386, 0.258, 0.578, 1.0, 0.11, 0.287, 0.339], [0.363, 0.093, 0.233, 0.099, 0.119, 0.145, 0.128, -0.264, 0.146, 0.296, 0.11, 1.0, 0.256, 0.46], [0.127, 0.381, 0.265, 0.134, 0.014, 0.071, 0.025, -0.28, 0.33, 0.341, 0.287, 0.256, 1.0, 0.526], [0.223, 0.277, 0.414, 0.151, 0.085, 0.025, 0.169, -0.417, 0.432, 0.425, 0.339, 0.46, 0.526, 1.0]], "x": ["age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal", "target"], "y": ["age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal", "target"], "colorscale": "RdBu", "zmid": 0, "zmin": -1, "zmax": 1, "text": [["1.00", "-0.10", "0.10", "0.28", "0.21", "0.12", "0.15", "-0.39", "0.09", "0.20", "0.16", "0.36", "0.13", "0.22"], ["-0.10", "1.00", "0.01", "-0.06", "-0.20", "0.05", "0.02", "-0.05", "0.15", "0.10", "0.04", "0.09", "0.38", "0.28"], ["0.10", "0.01", "1.00", "-0.04", "0.07", "-0.04", "0.07", "-0.33", "0.38", "0.20", "0.15", "0.23", "0.27", "0.41"], ["0.28", "-0.06", "-0.04", "1.00", "0.13", "0.17", "0.15", "-0.04", "0.07", "0.19", "0.12", "0.10", "0.13", "0.15"], ["0.21", "-0.20", "0.07", "0.13", "1.00", "0.01", "0.17", "-0.00", "0.06", "0.05", "-0.00", "0.12", "0.01", "0.09"], ["0.12", "0.05", "-0.04", "0.17", "0.01", "1.00", "0.07", "-0.01", "0.03", "0.01", "0.06", "0.14", "0.07", "0.03"], ["0.15", "0.02", "0.07", "0.15", "0.17", "0.07", "1.00", "-0.08", "0.09", "0.11", "0.13", "0.13", "0.03", "0.17"], ["-0.39", "-0.05", "-0.33", "-0.04", "-0.00", "-0.01", "-0.08", "1.00", "-0.38", "-0.34", "-0.39", "-0.26", "-0.28", "-0.42"], ["0.09", "0.15", "0.38", "0.07", "0.06", "0.03", "0.09", "-0.38", "1.00", "0.29", "0.26", "0.15", "0.33", "0.43"], ["0.20", "0.10", "0.20", "0.19", "0.05", "0.01", "0.11", "-0.34", "0.29", "1.00", "0.58", "0.30", "0.34", "0.42"], ["0.16", "0.04", "0.15", "0.12", "-0.00", "0.06", "0.13", "-0.39", "0.26", "0.58", "1.00", "0.11", "0.29", "0.34"], ["0.36", "0.09", "0.23", "0.10", "0.12", "0.14", "0.13", "-0.26", "0.15", "0.30", "0.11", "1.00", "0.26", "0.46"], ["0.13", "0.38", "0.27", "0.13", "0.01", "0.07", "0.03", "-0.28", "0.33", "0.34", "0.29", "0.26", "1.00", "0.53"], ["0.22", "0.28", "0.41", "0.15", "0.09", "0.03", "0.17", "-0.42", "0.43", "0.42", "0.34", "0.46", "0.53", "1.00"]], "texttemplate": "%{text}", "showscale": true}],$.extend(true,{},L,{"title": {"text": "Pearson Correlation Heatmap", "font": {"size": 14}}, "height": 700, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 100, "l": 100, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5", "tickangle": -45, "tickfont": {"size": 12}, "automargin": true}, "yaxis": {"title": "", "gridcolor": "#E5E5E5", "tickfont": {"size": 12}, "automargin": true}, "width": 770}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The correlation analysis of 14 variables reveals a moderate average correlation of 0.178, with the strongest relationship observed between oldpeak and slope (r=0.578) and the weakest between cholesterol and maximum heart rate achieved (r=-0.003). With zero high correlations detected, this indicates relatively independent variables with minimal multicollinearity concerns. This low correlation structure suggests that most variables contribute unique information to the dataset, which is favorable for building robust predictive models without the need for extensive feature reduction or regularization techniques.</em></p>
+
+</div>
+
+<div id="outlier-detection" class="section level3">
+<h3>Outlier Detection</h3>
+<p><strong>Methodology:</strong> Outlier detection uses two complementary methods:
+<strong>(1) IQR Method</strong> - values below Q1 - 1.5xIQR or above Q3 + 1.5xIQR are flagged.
+This is robust to non-normal distributions as it relies on quartiles rather than mean/standard deviation.
+<strong>(2) Z-Score Method</strong> - values more than 3 standard deviations from the mean are flagged.
+This assumes approximate normality and is sensitive to extreme values.
+Using both methods together provides comprehensive outlier identification. Flagged values are
+retained for modeling - tree-based algorithms (Random Forest, XGBoost, Gradient Boosting) are
+inherently robust to outliers due to their split-based decision boundaries.</p>
+<p><strong>108 IQR flags</strong> and <strong>9 Z-score flags</strong> detected.</p>
+<table class="sortable">
+<thead><tr><th>Column</th><th>IQR Flags</th><th>Z-Score Flags</th></tr></thead>
+<tbody>
+<tr><td>age</td><td>0</td><td>0</td></tr>
+<tr><td>sex</td><td>0</td><td>0</td></tr>
+<tr><td>cp</td><td>23</td><td>0</td></tr>
+<tr><td>trestbps</td><td>9</td><td>2</td></tr>
+<tr><td>chol</td><td>5</td><td>4</td></tr>
+<tr><td>fbs</td><td>45</td><td>0</td></tr>
+<tr><td>restecg</td><td>0</td><td>0</td></tr>
+<tr><td>thalach</td><td>1</td><td>1</td></tr>
+<tr><td>exang</td><td>0</td><td>0</td></tr>
+<tr><td>oldpeak</td><td>5</td><td>2</td></tr>
+<tr><td>slope</td><td>0</td><td>0</td></tr>
+<tr><td>ca</td><td>20</td><td>0</td></tr>
+<tr><td>thal</td><td>0</td><td>0</td></tr>
+<tr><td>target</td><td>0</td><td>0</td></tr>
+</tbody>
+</table>
+
+<p class="chart-conclusion"><em>A total of 108 IQR-flagged and 9 Z-score-flagged observations were detected. These are retained for tree-based models which are robust to outliers, but may impact linear model performance.</em></p>
+
+<div id="outlier-age" class="section level4">
+<h4>Age</h4>
+<div class="chart-container" id="outlier-0" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('outlier-0',[{"type": "box", "y": [63, 67, 67, 37, 41, 56, 62, 57, 63, 53, 57, 56, 56, 44, 52, 57, 48, 54, 48, 49, 64, 58, 58, 58, 60, 50, 58, 66, 43, 40, 69, 60, 64, 59, 44, 42, 43, 57, 55, 61, 65, 40, 71, 59, 61, 58, 51, 50, 65, 53, 41, 65, 44, 44, 60, 54, 50, 41, 54, 51, 51, 46, 58, 54, 54, 60, 60, 54, 59, 46, 65, 67, 62, 65, 44, 65, 60, 51, 48, 58, 45, 53, 39, 68, 52, 44, 47, 53, 53, 51, 66, 62, 62, 44, 63, 52, 59, 60, 52, 48, 45, 34, 57, 71, 49, 54, 59, 57, 61, 39, 61, 56, 52, 43, 62, 41, 58, 35, 63, 65, 48, 63, 51, 55, 65, 45, 56, 54, 44, 62, 54, 51, 29, 51, 43, 55, 70, 62, 35, 51, 59, 59, 52, 64, 58, 47, 57, 41, 45, 60, 52, 42, 67, 55, 64, 70, 51, 58, 60, 68, 46, 77, 54, 58, 48, 57, 52, 54, 35, 45, 70, 53, 59, 62, 64, 57, 52, 56, 43, 53, 48, 56, 42, 59, 60, 63, 42, 66, 54, 69, 50, 51, 43, 62, 68, 67, 69, 45, 50, 59, 50, 64, 57, 64, 43, 45, 58, 50, 55, 62, 37, 38, 41, 66, 52, 56, 46, 46, 64, 59, 41, 54, 39, 53, 63, 34, 47, 67, 54, 66, 52, 55, 49, 74, 54, 54, 56, 46, 49, 42, 41, 41, 49, 61, 60, 67, 58, 47, 52, 62, 57, 58, 64, 51, 43, 42, 67, 76, 70, 57, 44, 58, 60, 44, 61, 42, 52, 59, 40, 42, 61, 66, 46, 71, 59, 64, 66, 39, 57, 58, 57, 47, 55, 35, 61, 58, 58, 58, 56, 56, 67, 55, 44, 63, 63, 41, 59, 57, 45, 68, 57, 57, 38], "name": "age", "marker": {"color": "#4E79A7"}, "boxmean": true}],$.extend(true,{},L,{"title": {"text": "Outliers: age<br><sub>IQR flags: 0, Z-score flags: 0 (0.0%)</sub>", "font": {"size": 14}}, "height": 350, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Value", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The age distribution shows a median of 56 years with an interquartile range of 13 years (Q1: 48, Q3: 61), spanning from 29 to 77 years with no outliers detected. This indicates a relatively mature population with fairly consistent age clustering around the middle-age demographic. The absence of outliers and moderate IQR suggests stable, predictable age patterns that should provide reliable signal for age-based modeling features without requiring extensive outlier treatment or data preprocessing.</em></p>
+
+</div>
+
+<div id="outlier-sex" class="section level4">
+<h4>Sex</h4>
+<div class="chart-container" id="outlier-1" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('outlier-1',[{"type": "box", "y": [1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1], "name": "sex", "marker": {"color": "#59A14F"}, "boxmean": true}],$.extend(true,{},L,{"title": {"text": "Outliers: sex<br><sub>IQR flags: 0, Z-score flags: 0 (0.0%)</sub>", "font": {"size": 14}}, "height": 350, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Value", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The boxplot for the sex variable shows a binary distribution with a minimum of 0.0, maximum of 1.0, and median of 1.0, indicating this is a categorical variable encoded as 0/1 with more observations in the "1" category. The interquartile range of 1.0 with Q1 at 0.0 and Q3 at 1.0 demonstrates the data spans both categories, while the absence of outliers (0.0% outlier percentage) confirms clean binary encoding. This balanced binary structure makes the sex variable well-suited for use as a categorical predictor in machine learning models without requiring additional preprocessing or outlier handling.</em></p>
+
+</div>
+
+<div id="outlier-cp" class="section level4">
+<h4>Cp</h4>
+<div class="chart-container" id="outlier-2" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('outlier-2',[{"type": "box", "y": [1, 4, 4, 3, 2, 2, 4, 4, 4, 4, 4, 2, 3, 2, 3, 3, 2, 4, 3, 2, 1, 1, 2, 3, 4, 3, 3, 1, 4, 4, 1, 4, 3, 4, 3, 4, 4, 4, 4, 3, 4, 1, 2, 3, 4, 3, 3, 4, 3, 3, 2, 4, 4, 2, 4, 4, 3, 4, 3, 1, 4, 3, 4, 3, 4, 4, 3, 3, 4, 3, 3, 4, 4, 4, 4, 3, 4, 3, 2, 4, 4, 4, 3, 3, 2, 3, 3, 3, 4, 3, 4, 4, 3, 3, 3, 4, 4, 4, 2, 4, 4, 1, 4, 3, 3, 2, 4, 3, 4, 4, 4, 4, 1, 4, 3, 2, 3, 4, 4, 4, 4, 4, 3, 4, 1, 2, 4, 4, 2, 4, 3, 3, 2, 4, 3, 2, 4, 2, 4, 3, 2, 1, 2, 3, 3, 3, 4, 3, 2, 3, 1, 4, 3, 4, 4, 4, 4, 4, 4, 3, 2, 4, 3, 4, 3, 4, 3, 2, 4, 2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 3, 4, 4, 1, 1, 4, 2, 3, 2, 2, 3, 3, 4, 4, 4, 3, 4, 1, 4, 2, 1, 4, 4, 3, 3, 4, 4, 4, 4, 2, 4, 3, 1, 3, 4, 4, 1, 2, 4, 4, 4, 3, 3, 3, 4, 4, 2, 4, 3, 4, 4, 3, 4, 3, 2, 3, 4, 4, 4, 2, 2, 2, 2, 4, 1, 3, 4, 4, 4, 4, 2, 4, 4, 4, 3, 4, 3, 4, 3, 2, 2, 3, 2, 1, 3, 4, 4, 4, 3, 4, 3, 4, 4, 4, 4, 1, 1, 3, 3, 2, 4, 4, 3, 4, 2, 4, 4, 4, 2, 2, 2, 3, 2, 4, 4, 4, 2, 4, 4, 1, 4, 4, 2, 3], "name": "cp", "marker": {"color": "#F28E2B"}, "boxmean": true}],$.extend(true,{},L,{"title": {"text": "Outliers: cp<br><sub>IQR flags: 23, Z-score flags: 0 (7.6%)</sub>", "font": {"size": 14}}, "height": 350, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Value", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The boxplot for the 'cp' variable reveals a highly skewed distribution with a median of 3.0, Q1 of 3.0, and Q3 of 4.0, indicating that 75% of observations fall within the upper two categories (3-4) of this likely categorical variable. Despite the compressed interquartile range of 1.0, the dataset contains 23 IQR-flagged observations representing 7.6% outliers, suggesting some data points fall outside the typical range. This distribution pattern indicates the 'cp' feature has limited variability and may require careful encoding or binning strategies in modeling, while the presence of outliers warrants investigation to determine if they represent data quality issues or meaningful edge cases that could impact model performance.</em></p>
+
+</div>
+
+<div id="outlier-trestbps" class="section level4">
+<h4>Trestbps</h4>
+<div class="chart-container" id="outlier-3" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('outlier-3',[{"type": "box", "y": [145, 160, 120, 130, 130, 120, 140, 120, 130, 140, 140, 140, 130, 120, 172, 150, 110, 140, 130, 130, 110, 150, 120, 132, 130, 120, 120, 150, 150, 110, 140, 117, 140, 135, 130, 140, 120, 150, 132, 150, 150, 140, 160, 150, 130, 112, 110, 150, 140, 130, 105, 120, 112, 130, 130, 124, 140, 110, 125, 125, 130, 142, 128, 135, 120, 145, 140, 150, 170, 150, 155, 125, 120, 110, 110, 160, 125, 140, 130, 150, 104, 130, 140, 180, 120, 140, 138, 128, 138, 130, 120, 160, 130, 108, 135, 128, 110, 150, 134, 122, 115, 118, 128, 110, 120, 108, 140, 128, 120, 118, 145, 125, 118, 132, 130, 135, 140, 138, 130, 135, 130, 150, 100, 140, 138, 130, 200, 110, 120, 124, 120, 94, 130, 140, 122, 135, 145, 120, 120, 125, 140, 170, 128, 125, 105, 108, 165, 112, 128, 102, 152, 102, 115, 160, 120, 130, 140, 125, 140, 118, 101, 125, 110, 100, 124, 132, 138, 132, 126, 112, 160, 142, 174, 140, 145, 152, 108, 132, 130, 130, 124, 134, 148, 178, 158, 140, 120, 160, 192, 140, 129, 140, 132, 138, 120, 100, 160, 138, 120, 160, 110, 180, 150, 140, 110, 142, 128, 144, 130, 150, 120, 120, 130, 178, 112, 120, 105, 138, 130, 138, 112, 108, 94, 123, 108, 118, 112, 152, 110, 112, 136, 180, 118, 120, 160, 122, 130, 120, 134, 120, 110, 126, 130, 134, 120, 120, 100, 110, 125, 128, 110, 146, 128, 120, 115, 120, 106, 140, 156, 124, 118, 136, 150, 120, 138, 136, 128, 126, 152, 130, 140, 160, 140, 112, 134, 170, 146, 138, 154, 130, 110, 130, 128, 122, 148, 114, 170, 125, 130, 120, 152, 132, 120, 140, 124, 120, 164, 140, 110, 144, 130, 130, 138], "name": "trestbps", "marker": {"color": "#E15759"}, "boxmean": true}],$.extend(true,{},L,{"title": {"text": "Outliers: trestbps<br><sub>IQR flags: 9, Z-score flags: 2 (3.0%)</sub>", "font": {"size": 14}}, "height": 350, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Value", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The boxplot for trestbps (resting blood pressure) shows a median of 130.0 mmHg with an interquartile range of 20.0 mmHg (Q1: 120.0, Q3: 140.0), indicating that half of patients have blood pressure readings between these values. The distribution reveals 2.97% outliers with 9 IQR-based flags, suggesting most patients fall within normal to slightly elevated blood pressure ranges, though some extreme cases exist with values reaching up to 200.0 mmHg. This relatively clean distribution with minimal extreme outliers makes trestbps a reliable predictor for cardiovascular risk modeling, though the outliers may represent high-risk patients requiring special attention in clinical decision-making algorithms.</em></p>
+
+</div>
+
+<div id="outlier-chol" class="section level4">
+<h4>Chol</h4>
+<div class="chart-container" id="outlier-4" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('outlier-4',[{"type": "box", "y": [233, 286, 229, 250, 204, 236, 268, 354, 254, 203, 192, 294, 256, 263, 199, 168, 229, 239, 275, 266, 211, 283, 284, 224, 206, 219, 340, 226, 247, 167, 239, 230, 335, 234, 233, 226, 177, 276, 353, 243, 225, 199, 302, 212, 330, 230, 175, 243, 417, 197, 198, 177, 290, 219, 253, 266, 233, 172, 273, 213, 305, 177, 216, 304, 188, 282, 185, 232, 326, 231, 269, 254, 267, 248, 197, 360, 258, 308, 245, 270, 208, 264, 321, 274, 325, 235, 257, 216, 234, 256, 302, 164, 231, 141, 252, 255, 239, 258, 201, 222, 260, 182, 303, 265, 188, 309, 177, 229, 260, 219, 307, 249, 186, 341, 263, 203, 211, 183, 330, 254, 256, 407, 222, 217, 282, 234, 288, 239, 220, 209, 258, 227, 204, 261, 213, 250, 174, 281, 198, 245, 221, 288, 205, 309, 240, 243, 289, 250, 308, 318, 298, 265, 564, 289, 246, 322, 299, 300, 293, 277, 197, 304, 214, 248, 255, 207, 223, 288, 282, 160, 269, 226, 249, 394, 212, 274, 233, 184, 315, 246, 274, 409, 244, 270, 305, 195, 240, 246, 283, 254, 196, 298, 247, 294, 211, 299, 234, 236, 244, 273, 254, 325, 126, 313, 211, 309, 259, 200, 262, 244, 215, 231, 214, 228, 230, 193, 204, 243, 303, 271, 268, 267, 199, 282, 269, 210, 204, 277, 206, 212, 196, 327, 149, 269, 201, 286, 283, 249, 271, 295, 235, 306, 269, 234, 178, 237, 234, 275, 212, 208, 201, 218, 263, 295, 303, 209, 223, 197, 245, 261, 242, 319, 240, 226, 166, 315, 204, 218, 223, 180, 207, 228, 311, 149, 204, 227, 278, 220, 232, 197, 335, 253, 205, 192, 203, 318, 225, 220, 221, 240, 212, 342, 169, 187, 197, 157, 176, 241, 264, 193, 131, 236, 175], "name": "chol", "marker": {"color": "#BAB0AC"}, "boxmean": true}],$.extend(true,{},L,{"title": {"text": "Outliers: chol<br><sub>IQR flags: 5, Z-score flags: 4 (1.7%)</sub>", "font": {"size": 14}}, "height": 350, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Value", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The boxplot for cholesterol levels shows a median of 241.0 mg/dL with an interquartile range of 64.0 (Q1: 211.0, Q3: 275.0), indicating a relatively tight distribution around typical values. However, the presence of 5 extreme outliers (1.65% of observations) extending up to 564.0 mg/dL suggests some individuals have dangerously high cholesterol levels that deviate significantly from the normal population. These outliers require careful handling in predictive modeling as they may represent a distinct high-risk patient subgroup that could either enhance model performance through valuable signal or introduce noise depending on the clinical outcome being predicted.</em></p>
+
+</div>
+
+<div id="outlier-fbs" class="section level4">
+<h4>Fbs</h4>
+<div class="chart-container" id="outlier-5" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('outlier-5',[{"type": "box", "y": [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0], "name": "fbs", "marker": {"color": "#4E79A7"}, "boxmean": true}],$.extend(true,{},L,{"title": {"text": "Outliers: fbs<br><sub>IQR flags: 45, Z-score flags: 0 (14.9%)</sub>", "font": {"size": 14}}, "height": 350, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Value", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The boxplot for the fbs variable shows a binary distribution with values ranging from 0.0 to 1.0, where the median, Q1, and Q3 are all 0.0, resulting in an IQR of 0.0. This indicates that the majority of observations have a value of 0, with only 14.85% of cases flagged as outliers (likely the cases with value 1). The extremely skewed distribution suggests this is a rare binary condition, which may require special handling in modeling such as class balancing techniques or stratified sampling to ensure the minority class is adequately represented for predictive accuracy.</em></p>
+
+</div>
+
+<div id="outlier-restecg" class="section level4">
+<h4>Restecg</h4>
+<div class="chart-container" id="outlier-6" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('outlier-6',[{"type": "box", "y": [2, 2, 2, 0, 2, 0, 2, 0, 2, 2, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 2, 0, 0, 0, 2, 2, 0, 2, 2, 2, 0, 0, 2, 2, 0, 2, 0, 2, 2, 2, 0, 2, 2, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 2, 0, 2, 2, 0, 2, 2, 2, 2, 2, 0, 0, 0, 2, 0, 0, 2, 2, 2, 2, 0, 0, 2, 0, 2, 2, 2, 2, 0, 0, 2, 2, 2, 0, 0, 0, 2, 0, 2, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 0, 2, 0, 2, 0, 2, 0, 0, 2, 2, 2, 2, 2, 0, 2, 2, 0, 0, 2, 0, 2, 0, 0, 0, 2, 2, 0, 0, 2, 0, 2, 2, 0, 0, 2, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 2, 2, 0, 0, 2, 0, 2, 2, 2, 2, 0, 2, 2, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 2, 0, 0, 2, 0, 2, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 2, 1, 2, 2, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 2, 0, 0, 0, 1, 2, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 2, 2, 0, 2, 0, 0, 0, 1, 0, 0, 1, 2, 0, 2, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 2, 0], "name": "restecg", "marker": {"color": "#59A14F"}, "boxmean": true}],$.extend(true,{},L,{"title": {"text": "Outliers: restecg<br><sub>IQR flags: 0, Z-score flags: 0 (0.0%)</sub>", "font": {"size": 14}}, "height": 350, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Value", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The boxplot for the restecg variable shows a median value of 1.0 with quartiles at Q1=0.0 and Q3=2.0, indicating this appears to be a categorical variable with values ranging from 0 to 2. The data distribution shows no outliers (0.0% outlier rate) and an IQR of 2.0, suggesting the variable takes on discrete ordinal values across its full range. This clean distribution with no anomalous values indicates the restecg feature is well-suited for modeling without requiring outlier treatment or data cleaning steps.</em></p>
+
+</div>
+
+<div id="outlier-thalach" class="section level4">
+<h4>Thalach</h4>
+<div class="chart-container" id="outlier-7" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('outlier-7',[{"type": "box", "y": [150, 108, 129, 187, 172, 178, 160, 163, 147, 155, 148, 153, 142, 173, 162, 174, 168, 160, 139, 171, 144, 162, 160, 173, 132, 158, 172, 114, 171, 114, 151, 160, 158, 161, 179, 178, 120, 112, 132, 137, 114, 178, 162, 157, 169, 165, 123, 128, 157, 152, 168, 140, 153, 188, 144, 109, 163, 158, 152, 125, 142, 160, 131, 170, 113, 142, 155, 165, 140, 147, 148, 163, 99, 158, 177, 151, 141, 142, 180, 111, 148, 143, 182, 150, 172, 180, 156, 115, 160, 149, 151, 145, 146, 175, 172, 161, 142, 157, 158, 186, 185, 174, 159, 130, 139, 156, 162, 150, 140, 140, 146, 144, 190, 136, 97, 132, 165, 182, 132, 127, 150, 154, 143, 111, 174, 175, 133, 126, 170, 163, 147, 154, 202, 186, 165, 161, 125, 103, 130, 166, 164, 159, 184, 131, 154, 152, 124, 179, 170, 160, 178, 122, 160, 145, 96, 109, 173, 171, 170, 151, 156, 162, 158, 122, 175, 168, 169, 159, 156, 138, 112, 111, 143, 157, 132, 88, 147, 105, 162, 173, 166, 150, 178, 145, 161, 179, 194, 120, 195, 146, 163, 122, 143, 106, 115, 125, 131, 152, 162, 125, 159, 154, 173, 133, 161, 147, 130, 126, 155, 154, 170, 182, 168, 165, 160, 162, 172, 152, 122, 182, 172, 167, 179, 95, 169, 192, 143, 172, 108, 132, 169, 117, 126, 121, 163, 116, 103, 144, 162, 162, 153, 163, 163, 145, 96, 71, 156, 118, 168, 140, 126, 105, 105, 157, 181, 173, 142, 116, 143, 141, 149, 152, 171, 169, 125, 125, 156, 134, 181, 150, 138, 138, 120, 125, 162, 155, 152, 152, 164, 131, 143, 179, 130, 174, 161, 140, 146, 144, 163, 169, 150, 166, 144, 144, 136, 182, 90, 123, 132, 141, 115, 174, 173], "name": "thalach", "marker": {"color": "#F28E2B"}, "boxmean": true}],$.extend(true,{},L,{"title": {"text": "Outliers: thalach<br><sub>IQR flags: 1, Z-score flags: 1 (0.3%)</sub>", "font": {"size": 14}}, "height": 350, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Value", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The boxplot for thalach (maximum heart rate achieved) shows a median of 153 bpm with an interquartile range of 32.5 bpm (Q1: 133.5, Q3: 166.0), spanning from a minimum of 71 bpm to a maximum of 202 bpm. The distribution exhibits significant outliers, with 33% of observations flagged as anomalous, indicating substantial variability in maximum heart rate measurements across the dataset. This high percentage of outliers suggests the need for careful data preprocessing and potentially separate modeling approaches for extreme values, as these outliers could represent critical clinical cases or measurement errors that require domain expert validation before model training.</em></p>
+
+</div>
+
+<div id="outlier-exang" class="section level4">
+<h4>Exang</h4>
+<div class="chart-container" id="outlier-8" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('outlier-8',[{"type": "box", "y": [0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0], "name": "exang", "marker": {"color": "#E15759"}, "boxmean": true}],$.extend(true,{},L,{"title": {"text": "Outliers: exang<br><sub>IQR flags: 0, Z-score flags: 0 (0.0%)</sub>", "font": {"size": 14}}, "height": 350, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Value", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The boxplot for the 'exang' variable shows a binary distribution with a minimum of 0.0, maximum of 1.0, and median of 0.0, indicating this is a categorical variable where the majority of observations fall into the "0" category. The interquartile range of 1.0 with Q1 at 0.0 and Q3 at 1.0 demonstrates that the data spans both categories, though the median of 0.0 suggests the dataset is skewed toward the lower value. With 0% outliers and no z-score flags, this clean binary variable will be suitable for modeling without requiring outlier treatment, making it a reliable predictor that can be easily interpreted in classification models or business rule engines.</em></p>
+
+</div>
+
+<div id="outlier-oldpeak" class="section level4">
+<h4>Oldpeak</h4>
+<div class="chart-container" id="outlier-9" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('outlier-9',[{"type": "box", "y": [2.3, 1.5, 2.6, 3.5, 1.4, 0.8, 3.6, 0.6, 1.4, 3.1, 0.4, 1.3, 0.6, 0.0, 0.5, 1.6, 1.0, 1.2, 0.2, 0.6, 1.8, 1.0, 1.8, 3.2, 2.4, 1.6, 0.0, 2.6, 1.5, 2.0, 1.8, 1.4, 0.0, 0.5, 0.4, 0.0, 2.5, 0.6, 1.2, 1.0, 1.0, 1.4, 0.4, 1.6, 0.0, 2.5, 0.6, 2.6, 0.8, 1.2, 0.0, 0.4, 0.0, 0.0, 1.4, 2.2, 0.6, 0.0, 0.5, 1.4, 1.2, 1.4, 2.2, 0.0, 1.4, 2.8, 3.0, 1.6, 3.4, 3.6, 0.8, 0.2, 1.8, 0.6, 0.0, 0.8, 2.8, 1.5, 0.2, 0.8, 3.0, 0.4, 0.0, 1.6, 0.2, 0.0, 0.0, 0.0, 0.0, 0.5, 0.4, 6.2, 1.8, 0.6, 0.0, 0.0, 1.2, 2.6, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.4, 3.6, 1.2, 1.0, 1.2, 0.0, 3.0, 1.2, 0.0, 0.0, 1.4, 1.8, 2.8, 0.0, 4.0, 1.2, 5.6, 1.4, 0.6, 4.0, 2.8, 0.0, 0.0, 0.4, 0.0, 0.0, 0.0, 0.2, 1.4, 2.6, 1.4, 1.6, 2.4, 0.0, 0.2, 0.0, 1.8, 0.6, 0.0, 1.0, 0.0, 0.0, 0.0, 1.2, 0.6, 1.6, 0.8, 2.2, 2.4, 1.6, 0.0, 1.2, 1.0, 0.0, 0.0, 1.6, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.9, 0.0, 0.0, 1.2, 2.0, 1.2, 0.1, 2.1, 1.9, 0.0, 0.5, 1.9, 0.8, 4.2, 0.0, 0.0, 0.8, 0.0, 0.0, 2.0, 0.0, 4.2, 0.1, 1.9, 1.5, 0.9, 0.1, 0.2, 1.1, 0.0, 0.0, 0.0, 0.2, 0.2, 0.0, 0.0, 3.0, 0.9, 0.0, 1.4, 0.0, 3.8, 2.0, 1.0, 0.0, 1.9, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 1.8, 0.7, 0.1, 0.0, 0.0, 0.1, 0.1, 3.4, 0.8, 0.2, 0.0, 3.2, 1.6, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 2.6, 0.0, 1.0, 0.1, 1.0, 1.0, 0.0, 1.5, 2.0, 0.2, 0.6, 1.2, 0.0, 0.3, 1.1, 0.0, 0.3, 0.3, 0.0, 0.9, 0.0, 3.6, 1.8, 1.0, 2.2, 0.0, 0.0, 1.9, 2.3, 1.8, 1.6, 0.8, 0.6, 0.0, 0.0, 0.0, 0.6, 3.0, 0.0, 2.0, 0.0, 0.0, 4.4, 2.8, 0.4, 0.0, 0.0, 0.8, 1.2, 2.8, 4.0, 0.0, 0.0, 1.0, 0.2, 1.2, 3.4, 1.2, 0.0, 0.0], "name": "oldpeak", "marker": {"color": "#BAB0AC"}, "boxmean": true}],$.extend(true,{},L,{"title": {"text": "Outliers: oldpeak<br><sub>IQR flags: 5, Z-score flags: 2 (1.7%)</sub>", "font": {"size": 14}}, "height": 350, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Value", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The boxplot for oldpeak shows a right-skewed distribution with a median of 0.8, Q1 of 0.0, Q3 of 1.6, and an IQR of 1.6, indicating that 75% of patients have oldpeak values between 0.0 and 1.6. The distribution contains 1.65% outliers with 5 IQR-based flags and 2 z-score flags, suggesting some patients have unusually high oldpeak values up to the maximum of 6.2. This skewed pattern indicates that most patients have relatively low ST depression values, but a small subset exhibits severe depression which could be critical clinical indicators. For modeling purposes, this variable may benefit from transformation or careful outlier treatment to prevent these extreme values from dominating model predictions while preserving their clinical significance.</em></p>
+
+</div>
+
+<div id="outlier-slope" class="section level4">
+<h4>Slope</h4>
+<div class="chart-container" id="outlier-10" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('outlier-10',[{"type": "box", "y": [3, 2, 2, 3, 1, 1, 3, 1, 2, 3, 2, 2, 2, 1, 1, 1, 3, 1, 1, 1, 2, 1, 2, 1, 2, 2, 1, 3, 1, 2, 1, 1, 1, 2, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 1, 2, 1, 3, 1, 1, 1, 1, 1, 2, 2, 1, 3, 1, 2, 3, 2, 1, 2, 2, 2, 1, 3, 2, 1, 2, 2, 1, 1, 1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 3, 2, 2, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 2, 1, 2, 2, 3, 2, 2, 3, 2, 1, 1, 2, 1, 1, 1, 2, 2, 3, 2, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 1, 1, 2, 2, 2, 2, 3, 2, 1, 1, 2, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 2, 2, 1, 2, 2, 2, 2, 1, 2, 1, 1, 2, 2, 1, 3, 1, 1, 3, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 1, 2, 1, 2, 2, 1, 1, 1, 2, 3, 1, 2, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1, 2, 2, 2, 1, 2, 2, 1, 2, 1, 1, 2, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 1, 2, 2, 2, 1, 2, 2, 1, 2, 1, 1, 3, 2, 2, 1, 3, 2, 1, 3, 1, 2, 1, 2, 2, 2, 2, 2, 2, 1], "name": "slope", "marker": {"color": "#4E79A7"}, "boxmean": true}],$.extend(true,{},L,{"title": {"text": "Outliers: slope<br><sub>IQR flags: 0, Z-score flags: 0 (0.0%)</sub>", "font": {"size": 14}}, "height": 350, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Value", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The boxplot for the slope variable shows a narrow distribution with a median of 2.0, Q1 of 1.0, Q3 of 2.0, and an IQR of 1.0, spanning from minimum 1.0 to maximum 3.0. This indicates a highly concentrated dataset with 75% of observations clustered in the lower half of the range and no outliers detected (0% outlier rate). The tight distribution suggests slope is a stable, predictable variable that could serve as a reliable feature for modeling, though its limited variability may constrain its discriminatory power for classification or regression tasks.</em></p>
+
+</div>
+
+<div id="outlier-ca" class="section level4">
+<h4>Ca</h4>
+<div class="chart-container" id="outlier-11" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('outlier-11',[{"type": "box", "y": [0.0, 3.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 3.0, 0.0, 2.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 3.0, 0.0, 1.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0, 2.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.0, 0.0, 0.0, 1.0, 1.0, 2.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 3.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 3.0, 1.0, 2.0, 3.0, 0.0, 0.0, 1.0, 0.0, 2.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 3.0, 0.0, 2.0, 2.0, 1.0, 0.0, 3.0, 0.0, 0.0, 2.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 2.0, 1.0, 3.0, 1.0, 1.0, 3.0, 0.0, 2.0, 2.0, 0.0, 0.0, 2.0, 0.0, 3.0, 1.0, 3.0, 0.0, 3.0, 3.0, 0.0, 2.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 3.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 1.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 3.0, 1.0, 1.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 1.0, 1.0, 2.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 1.0, 2.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 2.0, 0.0, 2.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 3.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 2.0, 0.0, 0.0, 2.0, 1.0, 1.0], "name": "ca", "marker": {"color": "#59A14F"}, "boxmean": true}],$.extend(true,{},L,{"title": {"text": "Outliers: ca<br><sub>IQR flags: 20, Z-score flags: 0 (6.7%)</sub>", "font": {"size": 14}}, "height": 350, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Value", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The boxplot for column 'ca' reveals a heavily right-skewed distribution with a median of 0.0, Q1 of 0.0, and Q3 of 1.0, indicating that at least 75% of observations are concentrated in the lower range (0-1). The presence of 20 IQR-based outliers representing 6.69% of the data, along with a maximum value of 3.0, suggests significant variability in the upper tail of this distribution. This skewed pattern indicates that the 'ca' variable may benefit from transformation techniques during preprocessing, and the substantial outlier proportion warrants careful consideration of robust modeling approaches or outlier treatment strategies to prevent model performance degradation.</em></p>
+
+</div>
+
+<div id="outlier-thal" class="section level4">
+<h4>Thal</h4>
+<div class="chart-container" id="outlier-12" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('outlier-12',[{"type": "box", "y": [6.0, 3.0, 7.0, 3.0, 3.0, 3.0, 3.0, 3.0, 7.0, 7.0, 6.0, 3.0, 6.0, 7.0, 7.0, 3.0, 7.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 7.0, 7.0, 3.0, 3.0, 3.0, 3.0, 7.0, 3.0, 7.0, 3.0, 7.0, 3.0, 3.0, 7.0, 6.0, 7.0, 3.0, 7.0, 7.0, 3.0, 3.0, 3.0, 7.0, 3.0, 7.0, 3.0, 3.0, 3.0, 7.0, 3.0, 3.0, 7.0, 7.0, 7.0, 7.0, 3.0, 3.0, 7.0, 3.0, 7.0, 3.0, 7.0, 7.0, 3.0, 7.0, 7.0, 3.0, 3.0, 7.0, 7.0, 6.0, 3.0, 3.0, 7.0, 3.0, 3.0, 7.0, 3.0, 3.0, 3.0, 7.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 7.0, 7.0, 3.0, 3.0, 7.0, 7.0, 7.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 3.0, 6.0, 7.0, 7.0, 6.0, 3.0, 3.0, 7.0, 7.0, 7.0, 7.0, 3.0, 7.0, 3.0, 3.0, 7.0, 7.0, 3.0, 3.0, 7.0, 7.0, 3.0, 3.0, 3.0, 3.0, 7.0, 7.0, 7.0, 3.0, 3.0, 7.0, 3.0, 7.0, 7.0, 3.0, 7.0, 3.0, 3.0, 3.0, 7.0, 3.0, 7.0, 7.0, 3.0, 3.0, 7.0, 7.0, 7.0, 7.0, 7.0, 3.0, 3.0, 3.0, 3.0, 7.0, 3.0, 3.0, 7.0, 3.0, 7.0, 7.0, 3.0, 3.0, 6.0, 7.0, 7.0, 6.0, 3.0, 3.0, 7.0, 7.0, 3.0, 7.0, 3.0, 3.0, 7.0, 6.0, 7.0, 7.0, 3.0, 7.0, 7.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 3.0, 3.0, 3.0, 7.0, 3.0, 7.0, 3.0, 7.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 7.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 7.0, 7.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 7.0, 3.0, 7.0, 3.0, 6.0, 7.0, 7.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 7.0, 3.0, 3.0, 3.0, 3.0, 3.0, 6.0, 6.0, 7.0, 3.0, 7.0, 6.0, 7.0, 3.0, 3.0, 7.0, 3.0, 3.0, 3.0, 3.0, 7.0, 3.0, 7.0, 3.0, 7.0, 6.0, 6.0, 7.0, 7.0, 3.0, 7.0, 3.0, 6.0, 7.0, 3.0, 3.0, 6.0, 7.0, 7.0, 7.0, 7.0, 3.0, 3.0], "name": "thal", "marker": {"color": "#F28E2B"}, "boxmean": true}],$.extend(true,{},L,{"title": {"text": "Outliers: thal<br><sub>IQR flags: 0, Z-score flags: 0 (0.0%)</sub>", "font": {"size": 14}}, "height": 350, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Value", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The boxplot for the 'thal' variable shows a highly skewed distribution with a median of 3.0, Q1 of 3.0, and Q3 of 7.0, indicating that at least 50% of observations are concentrated at the minimum value of 3.0. The large IQR of 4.0 combined with zero outliers (0.0% outlier rate) suggests the variable has limited variability with most values clustered at the lower end of the 3.0-7.0 range. This concentration of values at the lower bound may indicate a categorical variable encoded numerically or a heavily left-skewed continuous variable, which could require transformation or careful encoding strategies to avoid model bias toward the dominant category during feature engineering.</em></p>
+
+</div>
+
+<div id="outlier-target" class="section level4">
+<h4>Target</h4>
+<div class="chart-container" id="outlier-13" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('outlier-13',[{"type": "box", "y": [0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0], "name": "target", "marker": {"color": "#E15759"}, "boxmean": true}],$.extend(true,{},L,{"title": {"text": "Outliers: target<br><sub>IQR flags: 0, Z-score flags: 0 (0.0%)</sub>", "font": {"size": 14}}, "height": 350, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Value", "gridcolor": "#E5E5E5"}}),{responsive:true});</script>
+
+<p class="chart-conclusion"><em>The boxplot for the target variable reveals a binary distribution with a minimum of 0.0, median of 0.0, and maximum of 1.0, where Q1 is 0.0 and Q3 is 1.0, resulting in an IQR of 1.0. This indicates the target variable is binary with at least 50% of observations being 0 (since the median is 0.0) and represents a classic classification problem. The absence of outliers (0.0% outlier percentage and 0 outlier flags) suggests clean, well-defined categorical data that should perform well with standard classification algorithms without requiring extensive outlier treatment.</em></p>
+
+</div>
+
+</div>
+</div>
+
+<div id="feature-engineering" class="section level2">
+<h2>Feature Engineering &amp; Selection</h2>
+<p>Feature selection applied in three steps to reduce dimensionality. <strong>13 features</strong> retained for modeling.</p>
+
+<div id="selection-summary" class="section level3">
+<h3>Selection Summary</h3>
+<table>
+<thead><tr><th>Step</th><th>Method</th><th>Action</th><th>Result</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Variance Threshold (0.01)</td><td>Drop near-zero variance</td><td>0 dropped</td></tr>
+<tr><td>2</td><td>Correlation Filter (>0.95)</td><td>Drop highly correlated</td><td>0 dropped</td></tr>
+<tr><td>3</td><td>Mutual Information</td><td>Rank by MI score</td><td>13 retained</td></tr>
+</tbody>
+</table>
+
+<p class="chart-conclusion"><em>The feature selection process evaluated 14 original features and retained 13 features for modeling, with no features dropped due to high correlation (n_dropped_corr=0) and no features dropped due to low variance (n_dropped_var=0). This indicates that the dataset contains well-distributed, independent features with sufficient variability to contribute meaningful information to the model. Only one feature was removed during the selection process, suggesting the original feature set was already well-curated and most variables provide unique predictive value. This high retention rate should support robust model performance while maintaining interpretability with a manageable feature dimension.</em></p>
+</div>
+
+
+
+<div id="train-test-split" class="section level3">
+<h3>Train/Test Split</h3>
+<p>Split strategy: <strong>stratified</strong>.</p>
+<table>
+<thead><tr><th>Set</th><th>Rows</th><th>Split %</th></tr></thead>
+<tbody>
+<tr><td>Training</td><td>242</td><td>80%</td></tr>
+<tr><td>Test</td><td>61</td><td>20%</td></tr>
+</tbody>
+</table>
+
+<p class="chart-conclusion"><em>The dataset was split using a stratified approach, allocating 242 samples (80%) to the training set and 61 samples (20%) to the test set. This stratified split ensures that the class distribution is preserved across both training and testing partitions, which is critical for maintaining representative samples in each subset. The 80/20 split provides sufficient training data for model development while reserving an adequate test set for unbiased performance evaluation, supporting reliable model validation and accurate assessment of generalization capabilities for business deployment.</em></p>
+</div>
+
+<div id="split-preview" class="section level3">
+<h3>Data Preview After Split</h3>
+<p><strong>Training Set Preview (first 8 rows):</strong></p>
+<div class="table-scroll-wrapper">
+<table>
+<thead><tr><th>S.No.</th><th>age</th><th>sex</th><th>cp</th><th>trestbps</th><th>chol</th><th>fbs</th><th>restecg</th><th>thalach</th><th>exang</th><th>oldpeak</th><th>slope</th><th>ca</th><th>thal</th><th>target</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>-0.730</td><td>0.683</td><td>0.870</td><td>-0.396</td><td>0.458</td><td>-0.411</td><td>1.023</td><td>0.708</td><td>-0.696</td><td>-0.445</td><td>0.675</td><td>-0.690</td><td>1.180</td><td>1</td></tr>
+<tr><td>2</td><td>0.050</td><td>0.683</td><td>-1.184</td><td>-0.054</td><td>0.231</td><td>-0.411</td><td>-0.982</td><td>0.223</td><td>-0.696</td><td>-0.892</td><td>-0.959</td><td>-0.690</td><td>-0.878</td><td>0</td></tr>
+<tr><td>3</td><td>-0.061</td><td>-1.464</td><td>-1.184</td><td>0.059</td><td>0.724</td><td>2.432</td><td>1.023</td><td>0.399</td><td>1.436</td><td>-0.892</td><td>-0.959</td><td>0.446</td><td>-0.878</td><td>0</td></tr>
+<tr><td>4</td><td>-0.061</td><td>0.683</td><td>-1.184</td><td>-1.306</td><td>1.122</td><td>-0.411</td><td>-0.982</td><td>0.267</td><td>-0.696</td><td>-0.892</td><td>-0.959</td><td>-0.690</td><td>1.180</td><td>0</td></tr>
+<tr><td>5</td><td>0.273</td><td>-1.464</td><td>0.870</td><td>0.514</td><td>-0.168</td><td>-0.411</td><td>-0.982</td><td>-1.191</td><td>1.436</td><td>-0.713</td><td>0.675</td><td>-0.690</td><td>1.180</td><td>1</td></tr>
+<tr><td>6</td><td>-0.730</td><td>0.683</td><td>0.870</td><td>-0.054</td><td>0.117</td><td>2.432</td><td>1.023</td><td>0.002</td><td>1.436</td><td>-0.892</td><td>-0.959</td><td>1.581</td><td>1.180</td><td>1</td></tr>
+<tr><td>7</td><td>-0.061</td><td>0.683</td><td>0.870</td><td>-0.396</td><td>0.306</td><td>-0.411</td><td>1.023</td><td>-1.809</td><td>1.436</td><td>1.072</td><td>0.675</td><td>0.446</td><td>1.180</td><td>1</td></tr>
+<tr><td>8</td><td>0.050</td><td>0.683</td><td>0.870</td><td>0.514</td><td>-0.623</td><td>-0.411</td><td>-0.982</td><td>-1.721</td><td>1.436</td><td>4.106</td><td>2.309</td><td>-0.690</td><td>1.180</td><td>1</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Test Set Preview (first 5 rows):</strong></p>
+<div class="table-scroll-wrapper">
+<table>
+<thead><tr><th>S.No.</th><th>age</th><th>sex</th><th>cp</th><th>trestbps</th><th>chol</th><th>fbs</th><th>restecg</th><th>thalach</th><th>exang</th><th>oldpeak</th><th>slope</th><th>ca</th><th>thal</th><th>target</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>0.496</td><td>0.683</td><td>0.870</td><td>0.400</td><td>0.401</td><td>-0.411</td><td>1.023</td><td>1.415</td><td>-0.696</td><td>-0.892</td><td>-0.959</td><td>-0.690</td><td>-0.878</td><td>0</td></tr>
+<tr><td>2</td><td>1.275</td><td>0.683</td><td>0.870</td><td>1.651</td><td>-0.414</td><td>-0.411</td><td>1.023</td><td>-0.528</td><td>-0.696</td><td>1.161</td><td>-0.959</td><td>-0.690</td><td>0.665</td><td>0</td></tr>
+<tr><td>3</td><td>-0.395</td><td>-1.464</td><td>-0.157</td><td>-0.054</td><td>0.117</td><td>-0.411</td><td>1.023</td><td>-0.043</td><td>-0.696</td><td>-0.445</td><td>-0.959</td><td>-0.690</td><td>-0.878</td><td>0</td></tr>
+<tr><td>4</td><td>-2.289</td><td>0.683</td><td>-2.212</td><td>-0.737</td><td>-1.286</td><td>-0.411</td><td>1.023</td><td>1.062</td><td>-0.696</td><td>-0.892</td><td>-0.959</td><td>-0.690</td><td>-0.878</td><td>0</td></tr>
+<tr><td>5</td><td>-0.061</td><td>0.683</td><td>-0.157</td><td>1.083</td><td>-0.338</td><td>-0.411</td><td>1.023</td><td>0.664</td><td>-0.696</td><td>0.536</td><td>-0.959</td><td>-0.690</td><td>1.180</td><td>0</td></tr>
+</tbody>
+</table>
+</div>
+
+</div>
+</div>
+
+<div id="model-training" class="section level2">
+<h2>Model Training &amp; Results</h2>
+<p>3 candidate models evaluated per target. <strong>N/A</strong> won 0 of 1 targets.</p>
+
+<div id="models-considered" class="section level3">
+<h3>Models Considered</h3>
+<table>
+<thead><tr><th>Model</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>RandomForestClassifier</td><td>Bagged decision tree ensemble for classification</td></tr>
+<tr><td>SVC</td><td>Support vector classifier with kernel functions</td></tr>
+<tr><td>XGBClassifier</td><td>Gradient-boosted decision tree ensemble for classification</td></tr>
+</tbody>
+</table>
+
+<p class="chart-conclusion"><em>3 models were evaluated. Best model selection uses composite scoring: 35% RMSE + 25% MAPE + 25% R-Squared + 15% CV stability, ensuring robust performance across multiple criteria rather than optimizing a single metric.</em></p>
+</div>
+<table class="sortable">
+<thead><tr><th>Model</th><th>RMSE</th><th>MAE</th><th>MAPE</th><th>R2</th><th>CV Mean</th><th>CV Std</th></tr></thead>
+<tbody>
+<tr><td><strong>RandomForestClassifier</strong></td><td><strong>N/A</strong></td><td><strong>N/A</strong></td><td><strong>N/A</strong></td><td><strong>N/A</strong></td><td><strong>N/A</strong></td><td><strong>N/A</strong></td></tr>
+<tr><td>SVC</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>XGBClassifier</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+</tbody>
+</table>
+<p style="font-size:11px;color:#888;margin-top:4px;"><strong>RMSE</strong>: Root Mean Squared Error | <strong>MAE</strong>: Mean Absolute Error | <strong>MAPE</strong>: Mean Absolute Percentage Error (%) | <strong>R2</strong>: Coefficient of Determination | <strong>CV</strong>: Cross-Validation</p>
+</div>
+
+<div id="model-comparison" class="section level2">
+<h2>Model Comparison</h2>
+<p>Average R2 across all targets: <strong>0.000</strong>.</p>
+
+<div id="six-metric-comparison" class="section level3">
+<h3>6-Metric Comparison Table</h3>
+<table class="sortable">
+<thead><tr><th>Variable</th><th>Best Model</th><th>RMSE</th><th>MAE</th><th>MAPE</th><th>R2</th><th>CV Mean</th><th>CV Std</th></tr></thead>
+<tbody>
+<tr><td>target</td><td>RandomForestClassifier</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+</tbody>
+</table>
+
+</div>
+
+<div id="best-models-summary" class="section level3">
+<h3>Best Models Summary</h3>
+<table class="sortable">
+<thead><tr><th>Variable</th><th>Best Model</th><th>RMSE</th><th>MAE</th><th>MAPE</th><th>R2</th></tr></thead>
+<tbody>
+</tbody>
+</table>
+
+<p style="font-size:11px;color:#888;margin-top:4px;"><strong>RMSE</strong>: Root Mean Squared Error | <strong>MAE</strong>: Mean Absolute Error | <strong>MAPE</strong>: Mean Absolute Percentage Error (%) | <strong>R2</strong>: Coefficient of Determination</p>
+
+
+</div>
+
+<div id="comparison-charts" class="section level3">
+<h3>Comparison Charts</h3><div class="chart-container" id="model-cmp-main" style="width:100%;min-height:370px;"></div>
+<script>Plotly.newPlot('model-cmp-main',[{"type": "bar", "name": "ACCURACY", "x": ["RandomForestClassifier", "SVC", "XGBClassifier"], "y": [0.8852, 0.8525, 0.8525], "marker": {"color": "#4E79A7"}}, {"type": "bar", "name": "F1", "x": ["RandomForestClassifier", "SVC", "XGBClassifier"], "y": [0.8852, 0.8527, 0.8525], "marker": {"color": "#59A14F"}}, {"type": "bar", "name": "AUC_ROC", "x": ["RandomForestClassifier", "SVC", "XGBClassifier"], "y": [0.9513, 0.9437, 0.9188], "marker": {"color": "#F28E2B"}}],$.extend(true,{},L,{"title": {"text": "Model Comparison (Classification)", "font": {"size": 14}}, "height": 370, "font": {"family": "\"Helvetica Neue\",Helvetica,Arial,sans-serif", "size": 11}, "paper_bgcolor": "#FFFFFF", "plot_bgcolor": "#FFFFFF", "margin": {"t": 50, "b": 60, "l": 60, "r": 30}, "xaxis": {"title": "Model", "gridcolor": "#E5E5E5"}, "yaxis": {"title": "Score", "gridcolor": "#E5E5E5"}, "barmode": "group"}),{responsive:true});</script>
+
+</div>
+</div>
+
+<div id="validation-drift" class="section level2">
+<h2>Validation &amp; Drift</h2>
+<p>Comparing Phase 2 (CV on training) vs Phase 3 (test set) metrics.
+No significant drift detected.</p>
+
+<div id="drift-matrix" class="section level3">
+<h3>Full Drift Matrix</h3>
+<table class="sortable">
+<thead><tr><th>Target</th><th>RMSE</th><th>MAE</th><th>MAPE</th><th>R2</th></tr></thead>
+<tbody>
+<tr><td>target</td><td>0.00%</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+
+</tbody>
+</table>
+</div>
+<table class="sortable">
+<thead><tr><th>Metric</th><th>Phase 2</th><th>Phase 3</th><th>Drift %</th><th>Flag</th></tr></thead>
+<tbody>
+<tr><td>RMSE</td><td>0.0000</td><td>0.0000</td><td>0.00%</td><td>OK</td></tr>
+<tr><td>MAE</td><td>0.0000</td><td>0.0000</td><td>0.00%</td><td>OK</td></tr>
+<tr><td>MAPE</td><td>0.0000</td><td>0.0000</td><td>0.00%</td><td>OK</td></tr>
+<tr><td>R2</td><td>0.0000</td><td>0.0000</td><td>0.00%</td><td>OK</td></tr>
+</tbody>
+</table>
+<p style="font-size:11px;color:#888;margin-top:4px;">Drift % = |Phase2 - Phase3| / Phase2 x 100</p>
+</div>
+
+<div id="business-insights" class="section level2">
+<h2>Business Insights</h2>
+<p>1 insights generated across 1 target variables.</p>
+
+<div id="insights-general" class="section level3">
+<h3>General Insights</h3>
+
+<div style="border-left:3px solid #4E79A7;padding:12px;margin:12px 0;background:#f8f9fa;">
+  <p><strong>Classification Accuracy & Business Impact</strong></p>
+  <p><strong>Observation:</strong> RandomForestClassifier achieves 90.2% accuracy with F1-score of 0.902 on test set.</p>
+  <p><strong>Finding:</strong> High accuracy enables confident automated decision-making.</p>
+  <p><strong>Insight:</strong> Deploy in production with automated classification pipeline.</p>
+</div>
+</div>
+</div>
+
+<div id="executive-summary" class="section level2">
+<h2>Executive Summary</h2>
+
+<div id="exec-scope" class="section level3">
+<h3>Scope &amp; Methodology</h3>
+<p>The <strong>heart-disease-logistic-regression</strong> classification pipeline was executed using the Mu Sigma 3-phase modular approach.
+Phase 1 performed data profiling, feature engineering, and train/test splitting across <strong>303 observations</strong> and <strong>14 features</strong>.
+Phase 2 trained and validated <strong>3 candidate models</strong> across <strong>1 target variable</strong> using 5-fold cross-validation.
+Phase 3 executed final predictions on the held-out test set, generating <strong>61 predictions</strong>, and performed drift analysis and business insight extraction.</p>
+</div>
+
+<div id="exec-findings" class="section level3">
+<h3>Key Findings</h3>
+<p>Best models were selected per target based on composite scoring across 6 metrics.
+The average R2 across all targets is <strong>0.000</strong>, indicating baseline predictive power.
+No targets achieved R2 > 0.95; additional feature engineering may be beneficial.</p>
+</div>
+
+<div id="exec-risk" class="section level3">
+<h3>Risk &amp; Monitoring</h3>
+<p>No significant drift detected between training and test phases, indicating stable model generalization.
+1 business insights have been generated, highlighting key drivers and actionable recommendations for stakeholders.</p>
+</div>
+
+<div id="exec-recommendation" class="section level3">
+<h3>Strategic Recommendation</h3>
+<p>The pipeline is ready for deployment. Targets with drift or low R2 should be prioritized for re-training or feature enhancement before production use.
+Establish a monitoring framework to track prediction accuracy, data drift, and feature importance shifts over time.
+Re-train models when new data accumulates or performance degrades below thresholds.</p>
+</div>
+
+<div id="exec-perf" class="section level3">
+<h3>Best Model per Target (All 6 Metrics)</h3>
+<table class="sortable">
+<thead><tr><th>Variable</th><th>Best Model</th><th>RMSE</th><th>MAE</th><th>MAPE</th><th>R2</th><th>CV Mean</th><th>CV Std</th></tr></thead>
+<tbody>
+<tr><td>target</td><td>RandomForestClassifier</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+</tbody>
+</table>
+
+<p style="font-size:11px;color:#888;margin-top:4px;"><strong>RMSE</strong>: Root Mean Squared Error | <strong>MAE</strong>: Mean Absolute Error | <strong>MAPE</strong>: Mean Absolute Percentage Error (%) | <strong>R2</strong>: Coefficient of Determination | <strong>CV</strong>: Cross-Validation | <strong>ADF</strong>: Augmented Dickey-Fuller Test | <strong>KPSS</strong>: Kwiatkowski-Phillips-Schmidt-Shin Test</p>
+
+<p class="chart-conclusion"><em>This executive summary shows that the heart disease logistic regression project analyzed 1 target variable with an average R² of 0 and no dominant model identified. The zero R² indicates that none of the models successfully captured any variance in the target variable, suggesting fundamental issues with the modeling approach, feature selection, or data quality. This complete lack of predictive performance means the current models cannot be deployed for heart disease prediction and requires immediate investigation into data preprocessing, feature engineering, or alternative modeling strategies before any business application can be considered.</em></p>
+</div>
+</div>
+
+<div id="appendix-formulas" class="section level2">
+<h2>Appendix: Formulas &amp; Glossary</h2>
+
+<div id="metric-formulas" class="section level3">
+<h3>Metric Definitions</h3>
+<table>
+<thead><tr><th>Metric</th><th>Formula</th><th>Interpretation</th></tr></thead>
+<tbody>
+<tr><td>RMSE</td><td>$$\text{RMSE} = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}$$</td><td>Root Mean Squared Error - penalizes large errors more heavily. Lower is better.</td></tr>
+<tr><td>MAE</td><td>$$\text{MAE} = \frac{1}{n}\sum_{i=1}^{n}|y_i - \hat{y}_i|$$</td><td>Mean Absolute Error - average magnitude of errors. Lower is better.</td></tr>
+<tr><td>MAPE</td><td>$$\text{MAPE} = \frac{100}{n}\sum_{i=1}^{n}\left|\frac{y_i - \hat{y}_i}{y_i}\right|$$</td><td>Mean Absolute Percentage Error - scale-independent accuracy measure. Lower is better.</td></tr>
+<tr><td>R2</td><td>$$R^2 = 1 - \frac{\sum(y_i - \hat{y}_i)^2}{\sum(y_i - \bar{y})^2}$$</td><td>Coefficient of Determination - proportion of variance explained. Higher is better (max 1.0).</td></tr>
+<tr><td>CV Mean</td><td>$$\text{CV Mean} = \frac{1}{k}\sum_{j=1}^{k}s_j$$</td><td>Mean cross-validation score across k folds. Indicates average generalization performance.</td></tr>
+<tr><td>CV Std</td><td>$$\text{CV Std} = \sqrt{\frac{1}{k}\sum_{j=1}^{k}(s_j - \bar{s})^2}$$</td><td>Standard deviation of CV scores. Lower indicates more stable model performance across folds.</td></tr>
+</tbody>
+</table>
+</div>
+
+<div id="abbreviation-glossary" class="section level3">
+<h3>Abbreviation Glossary</h3>
+<table>
+<thead><tr><th>Abbreviation</th><th>Full Form</th></tr></thead>
+<tbody>
+<tr><td><strong>ACF</strong></td><td>Autocorrelation Function</td></tr>
+<tr><td><strong>ADF</strong></td><td>Augmented Dickey-Fuller Test</td></tr>
+<tr><td><strong>ARIMA</strong></td><td>Autoregressive Integrated Moving Average</td></tr>
+<tr><td><strong>CPI</strong></td><td>Consumer Price Index</td></tr>
+<tr><td><strong>CV</strong></td><td>Cross-Validation</td></tr>
+<tr><td><strong>EDA</strong></td><td>Exploratory Data Analysis</td></tr>
+<tr><td><strong>ETF</strong></td><td>Exchange-Traded Fund</td></tr>
+<tr><td><strong>IQR</strong></td><td>Interquartile Range</td></tr>
+<tr><td><strong>KPSS</strong></td><td>Kwiatkowski-Phillips-Schmidt-Shin Test</td></tr>
+<tr><td><strong>MAE</strong></td><td>Mean Absolute Error</td></tr>
+<tr><td><strong>MAPE</strong></td><td>Mean Absolute Percentage Error (%)</td></tr>
+<tr><td><strong>PACF</strong></td><td>Partial Autocorrelation Function</td></tr>
+<tr><td><strong>R2</strong></td><td>Coefficient of Determination</td></tr>
+<tr><td><strong>RF</strong></td><td>Random Forest</td></tr>
+<tr><td><strong>RMSE</strong></td><td>Root Mean Squared Error</td></tr>
+<tr><td><strong>TS</strong></td><td>Time Series</td></tr>
+<tr><td><strong>VAR</strong></td><td>Vector Autoregression</td></tr>
+<tr><td><strong>VARMAX</strong></td><td>VAR with Exogenous Variables</td></tr>
+<tr><td><strong>XGB</strong></td><td>eXtreme Gradient Boosting</td></tr>
+
+</tbody>
+</table>
+</div>
+
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="report-footer">
+  <div class="footer-subtitle" id="footer-dynamic-text"></div>
+</div>
+<script>
+(function() {
+  var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var now = new Date();
+  var monthYear = months[now.getMonth()] + " " + now.getFullYear();
+  document.getElementById("footer-dynamic-text").textContent = "Confidential - Mu Sigma, Inc. - " + monthYear;
+})();
+</script>
+
+</div><!-- /toc-content -->
+</div><!-- /row -->
+</div><!-- /main-container -->
+<script>
+$(document).ready(function() {
+  var $toc = $('#TOC');
+  var $content = $('.toc-content');
+  var headers = [];
+  var headerIdCounter = 0;
+
+  // Collect headings
+  $content.find('h2, h3').each(function() {
+    var $h = $(this);
+    var level = this.tagName === 'H2' ? 2 : 3;
+    var id = $h.attr('id');
+    if (!id) {
+      var $parent = $h.closest('.section[id]');
+      if ($parent.length) id = $parent.attr('id');
+    }
+    if (!id) {
+      id = 'section-' + headerIdCounter;
+      $h.attr('id', id);
+    }
+    headerIdCounter++;
+    headers.push({ text: $h.text().trim(), id: id, level: level, el: $h });
+  });
+
+  if (!headers.length) return;
+
+  // Build numbered TOC labels to match CSS counters
+  var h2n = 0, h3n = 0;
+  var html = '';
+  var inHeader = false;
+  var inSub = false;
+  var hIdx = 0;
+
+  for (var i = 0; i < headers.length; i++) {
+    var h = headers[i];
+    var label = '';
+    if (h.level === 2) {
+      h2n++; h3n = 0;
+      label = h2n + '. ' + h.text;
+      if (inSub) { html += '</ul>'; inSub = false; }
+      if (inHeader) { html += '</ul>'; inHeader = false; }
+      html += '<ul id="tocify-header' + hIdx + '" class="tocify-header list-group">';
+      html += '<li class="tocify-item list-group-item" data-unique="' + h.id + '">' + label + '</li>';
+      inHeader = true;
+      hIdx++;
+    } else if (h.level === 3) {
+      h3n++;
+      label = h2n + '.' + h3n + ' ' + h.text;
+      if (!inSub) {
+        html += '<ul class="tocify-subheader list-group" data-tag="3">';
+        inSub = true;
+      }
+      html += '<li class="tocify-item list-group-item" data-unique="' + h.id + '">' + label + '</li>';
+    }
+  }
+  if (inSub) html += '</ul>';
+  if (inHeader) html += '</ul>';
+
+  $toc.html(html);
+  $toc.find('.list-group-item').first().addClass('active');
+
+  function showActiveSubheader() {
+    var $active = $toc.find('.list-group-item.active');
+    var $parentUl = $active.closest('.tocify-header');
+    var $subParent = $active.closest('.tocify-subheader');
+    var $targetSub = $parentUl.length ? $parentUl.find('.tocify-subheader') : $subParent;
+    $toc.find('.tocify-subheader').not($targetSub).slideUp(150);
+    if ($targetSub && $targetSub.length && $targetSub.is(':hidden')) {
+      $targetSub.slideDown(250);
+    }
+  }
+  showActiveSubheader();
+
+  var isScrolling = false;
+  $toc.on('click', '.list-group-item', function(e) {
+    e.preventDefault();
+    var targetId = $(this).data('unique');
+    var $target = $('[id="' + targetId + '"]').first();
+    if ($target.length) {
+      isScrolling = true;
+      $toc.find('.list-group-item').removeClass('active');
+      $(this).addClass('active');
+      showActiveSubheader();
+      $('html, body').stop().animate({
+        scrollTop: $target.offset().top - 60
+      }, 400, function() {
+        setTimeout(function() { isScrolling = false; }, 100);
+      });
+    }
+  });
+
+  var scrollTimer;
+  $(window).on('scroll', function() {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(function() {
+      if (isScrolling) return;
+      var scrollTop = $(window).scrollTop() + 80;
+      var activeHeader = null;
+      for (var j = headers.length - 1; j >= 0; j--) {
+        var $el = headers[j].el;
+        var $section = $el.closest('.section[id]');
+        var top = ($section.length ? $section : $el).offset().top;
+        if (top <= scrollTop) { activeHeader = headers[j]; break; }
+      }
+      if (activeHeader) {
+        var $items = $toc.find('.list-group-item');
+        $items.removeClass('active');
+        $items.filter('[data-unique="' + activeHeader.id + '"]').addClass('active');
+        showActiveSubheader();
+      }
+    }, 50);
+  });
+});
+</script>
+
+</body>
+</html>

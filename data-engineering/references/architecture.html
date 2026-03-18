@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Engineering Skill — Documentation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Georgia, 'Times New Roman', serif; background: #ffffff; color: #333; max-width: 800px; margin: 0 auto; padding: 48px 24px; line-height: 1.8; font-size: 16px; }
+        
+        h1 { font-size: 28px; font-weight: normal; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 32px; }
+        h2 { font-size: 20px; font-weight: normal; margin-top: 40px; margin-bottom: 16px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+        h3 { font-size: 17px; font-weight: bold; margin-top: 24px; margin-bottom: 8px; }
+        
+        p { margin-bottom: 12px; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 15px; }
+        th { background: #f5f5f5; text-align: left; padding: 10px 12px; border: 1px solid #ddd; font-weight: bold; }
+        td { padding: 10px 12px; border: 1px solid #ddd; vertical-align: top; }
+        
+        code { font-family: 'Courier New', monospace; background: #f5f5f5; padding: 2px 6px; font-size: 14px; }
+        pre { background: #f5f5f5; border: 1px solid #ddd; padding: 16px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.6; margin: 12px 0; }
+        
+        .diagram { background: #fafafa; border: 1px solid #ddd; padding: 24px; margin: 16px 0; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5; white-space: pre; overflow-x: auto; }
+        
+        .note { background: #fffff0; border-left: 3px solid #cca; padding: 12px 16px; margin: 16px 0; font-size: 15px; }
+        
+        .conversation { background: #fafafa; border: 1px solid #ddd; padding: 16px; margin: 16px 0; font-size: 15px; }
+        .conversation .bot { color: #444; margin-bottom: 8px; }
+        .conversation .bot::before { content: "🤖 "; }
+        .conversation .user { color: #666; margin-bottom: 8px; }
+        .conversation .user::before { content: "👤 "; }
+        
+        .checkpoint { background: #f0f0f0; border: 1px solid #ccc; padding: 8px 12px; margin: 8px 0; font-size: 14px; }
+        .checkpoint::before { content: "⏸ Checkpoint: "; font-weight: bold; }
+        
+        ul { margin: 8px 0 12px 24px; }
+        li { margin-bottom: 4px; }
+        
+        .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #ccc; text-align: center; font-size: 13px; color: #999; }
+        
+        @media print { body { padding: 24px; } }
+    </style>
+</head>
+<body>
+
+<h1>Data Engineering Skill</h1>
+
+<p><strong>What it is:</strong> An interactive pipeline builder that creates ETL pipelines through conversation. You provide data, it asks questions, builds the pipeline, validates quality, loads into your database, and optionally pushes to GitHub.</p>
+
+<p><strong>What it replaces:</strong> Writing boilerplate extraction, transformation, quality checks, and loading code from scratch every time you have a new dataset.</p>
+
+<!-- ============================================================ -->
+<h2>Why This Skill Exists</h2>
+
+<p>Building a data pipeline typically requires:</p>
+<ul>
+    <li>Reading the source file and understanding its schema</li>
+    <li>Cleaning column names, parsing dates, removing duplicates</li>
+    <li>Checking for nulls, invalid formats, and data freshness</li>
+    <li>Connecting to a database and loading data</li>
+    <li>Saving the code so you can run it again</li>
+    <li>Pushing to Git for version control</li>
+</ul>
+
+<p>This skill does all of that through a guided conversation. You answer questions, it does the work.</p>
+
+<!-- ============================================================ -->
+<h2>Use Cases</h2>
+
+<table>
+    <tr><th>Who</th><th>Scenario</th></tr>
+    <tr><td>Data Engineer</td><td>Quickly scaffold a pipeline for a new dataset</td></tr>
+    <tr><td>Data Analyst</td><td>Load a CSV into PostgreSQL so they can query it with SQL</td></tr>
+    <tr><td>ML Engineer</td><td>Ingest Kaggle training data into a database</td></tr>
+    <tr><td>Developer</td><td>Set up data infrastructure for a new project</td></tr>
+</table>
+
+<h3>How to trigger it</h3>
+<p>Say any of these:</p>
+<ul>
+    <li>"Build a pipeline for my data"</li>
+    <li>"Load this CSV into PostgreSQL"</li>
+    <li>"Create an ETL pipeline"</li>
+    <li>"Ingest data from Kaggle into my database"</li>
+    <li>"Move data from this file to PostgreSQL"</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2>How It Works — Step by Step</h2>
+
+<p>The skill follows 8 stages. At each stage, it asks you questions before proceeding. Nothing happens without your approval.</p>
+
+<div class="diagram">
+  DISCOVER          DESIGN           BUILD            VALIDATE
+  (ask about        (show plan,      (extract,        (verify data
+   source &          get approval)    transform,       in database)
+   destination)                       check quality,
+                                      load)
+      │                 │                │                │
+      ▼                 ▼                ▼                ▼
+  STAGE 1-3  ───▶  STAGE 4  ───▶   STAGE 5   ───▶  STAGE 6
+                                                        │
+                                                        ▼
+                                    DEPLOY           DELIVER
+                                    (save script,    (git commit,
+                                     Airflow DAG)     GitHub push)
+                                        │                │
+                                        ▼                ▼
+                                    STAGE 7  ───▶   STAGE 8
+</div>
+
+<!-- Stage 1 -->
+<h3>Stage 1 — Discover Source</h3>
+
+<p>The skill asks where your data is.</p>
+
+<div class="conversation">
+    <div class="bot">"Where is your data? Local file, database, API, or Kaggle?"</div>
+    <div class="user">"/home/sindhuh/Downloads/kc_house_data.csv.zip"</div>
+    <div class="bot">"Found it. ZIP file, 789 KB. Extracted: kc_house_data.csv — 21,613 rows × 21 columns."</div>
+    <div class="bot">"Here's a preview:"</div>
+</div>
+
+<p>It then shows the first few rows and column types.</p>
+
+<div class="checkpoint">User confirms the source data looks correct.</div>
+
+<!-- Stage 2 -->
+<h3>Stage 2 — Discover Destination</h3>
+
+<p>The skill asks where the clean data should go.</p>
+
+<div class="conversation">
+    <div class="bot">"Where should the clean data land? PostgreSQL, MySQL, Snowflake, or a file?"</div>
+    <div class="user">"PostgreSQL, localhost, user postgres, password password"</div>
+    <div class="bot">"Connected to PostgreSQL. ✓"</div>
+    <div class="bot">"What database? (I can create one if needed)"</div>
+    <div class="user">"kaggle_data"</div>
+    <div class="bot">"What table name?"</div>
+    <div class="user">"kc_house_data"</div>
+    <div class="bot">"If the table already exists — replace it, append to it, or fail?"</div>
+    <div class="user">"Replace"</div>
+</div>
+
+<div class="checkpoint">User confirms destination, table name, and conflict strategy.</div>
+
+<!-- Stage 3 -->
+<h3>Stage 3 — Discover Requirements</h3>
+
+<div class="conversation">
+    <div class="bot">"Any specific requirements?"</div>
+    <div class="bot">"— Transformations? (rename columns, filter rows, etc.)"</div>
+    <div class="bot">"— Quality checks? (nulls, duplicates, format validation)"</div>
+    <div class="bot">"— Columns to drop?"</div>
+    <div class="user">"Auto-detect dates, remove duplicates, run all quality checks"</div>
+</div>
+
+<div class="checkpoint">User confirms transformation and quality requirements.</div>
+
+<!-- Stage 4 -->
+<h3>Stage 4 — Design (Present Plan)</h3>
+
+<p>Before doing anything, the skill shows you the full plan:</p>
+
+<pre>
+Pipeline Plan
+─────────────────────────────────
+Source:       kc_house_data.csv (21,613 rows × 21 columns)
+Transform:    Normalize columns, parse dates, dedup, optimize types
+Quality:      Nulls, duplicates, formats, freshness, row count
+Destination:  localhost:5432/kaggle_data.kc_house_data (replace)
+Reports:      HTML + JSON saved to workspace/reports/
+─────────────────────────────────
+Proceed? (yes / no / modify)
+</pre>
+
+<div class="checkpoint">User approves the plan before any execution begins.</div>
+
+<!-- Stage 5 -->
+<h3>Stage 5 — Build & Execute</h3>
+
+<p>The skill runs each phase and reports progress:</p>
+
+<table>
+    <tr><th>Phase</th><th>What happens</th><th>Output</th></tr>
+    <tr><td>Extract</td><td>Read source file into memory</td><td>"Loaded 21,613 rows"</td></tr>
+    <tr><td>Transform</td><td>Normalize columns, parse dates, dedup</td><td>"Transformed in 0.06s"</td></tr>
+    <tr><td>Quality</td><td>Run all validation checks</td><td>"3 passed, 0 failed, 1 info"</td></tr>
+    <tr><td>Load</td><td>Batch insert into PostgreSQL</td><td>"21,613 rows in 6.7s"</td></tr>
+    <tr><td>Report</td><td>Generate HTML + JSON reports</td><td>File paths shown</td></tr>
+</table>
+
+<div class="note">The skill pauses after quality checks. If there are failures, it asks whether to proceed or fix issues first.</div>
+
+<div class="checkpoint">User confirms load after seeing quality results.</div>
+
+<!-- Stage 6 -->
+<h3>Stage 6 — Post-Load Validation</h3>
+
+<p>After loading, the skill verifies the data is actually in the database:</p>
+
+<div class="conversation">
+    <div class="bot">"Verified: 21,613 rows in kc_house_data. ✓"</div>
+    <div class="bot">"Here are 3 sample rows from the database:"</div>
+    <div class="bot">"Want me to run any analytics queries? For example:"</div>
+    <div class="bot">"— Average price by zipcode"</div>
+    <div class="bot">"— Price distribution by bedrooms"</div>
+</div>
+
+<div class="checkpoint">Optional — user decides whether to explore the data.</div>
+
+<!-- Stage 7 -->
+<h3>Stage 7 — Deploy (Save Pipeline Code)</h3>
+
+<div class="conversation">
+    <div class="bot">"Pipeline complete! Would you like me to:"</div>
+    <div class="bot">"1. Save a reusable Python script"</div>
+    <div class="bot">"2. Create an Airflow DAG for scheduling"</div>
+    <div class="bot">"3. Both"</div>
+    <div class="bot">"4. Skip — I just needed the one-time run"</div>
+    <div class="user">"Save the script"</div>
+    <div class="bot">"Saved to: etl-pipeline/scripts/etl_kc_house_data.py"</div>
+    <div class="bot">"Run anytime: python3 etl_kc_house_data.py --help"</div>
+</div>
+
+<div class="checkpoint">User chooses what to save.</div>
+
+<!-- Stage 8 -->
+<h3>Stage 8 — Deliver (Git & GitHub)</h3>
+
+<div class="conversation">
+    <div class="bot">"Code saved! Want to push to Git?"</div>
+    <div class="bot">"1. Yes, I have a GitHub repo"</div>
+    <div class="bot">"2. Yes, create a new repo for me"</div>
+    <div class="bot">"3. No, keep it local"</div>
+</div>
+
+<p><strong>If "yes, existing repo":</strong></p>
+<div class="conversation">
+    <div class="bot">"What's the repo? (e.g., sindhuh/data-pipelines)"</div>
+    <div class="user">"sindhuh/etl-pipelines"</div>
+    <div class="bot">"Which branch?"</div>
+    <div class="user">"main"</div>
+    <div class="bot">"Committed and pushed. ✓"</div>
+</div>
+
+<p><strong>If "yes, create new":</strong></p>
+<div class="conversation">
+    <div class="bot">"What should the repo be called?"</div>
+    <div class="user">"etl-pipelines"</div>
+    <div class="bot">"Public or private?"</div>
+    <div class="user">"Private"</div>
+    <div class="bot">"Created github.com/sindhuh/etl-pipelines (private). Pushed. ✓"</div>
+</div>
+
+<p><strong>If "no":</strong></p>
+<div class="conversation">
+    <div class="bot">"All good. Files saved locally at etl-pipeline/scripts/."</div>
+</div>
+
+<div class="checkpoint">User decides on Git/GitHub delivery.</div>
+
+<!-- ============================================================ -->
+<h2>All Checkpoints</h2>
+
+<table>
+    <tr><th>#</th><th>When</th><th>What the skill asks</th><th>Required?</th></tr>
+    <tr><td>1</td><td>After reading source</td><td>"Found X rows × Y columns. Correct?"</td><td>Yes</td></tr>
+    <tr><td>2</td><td>After testing DB connection</td><td>"Load into db.table? Replace or append?"</td><td>Yes</td></tr>
+    <tr><td>3</td><td>After gathering requirements</td><td>"These transforms OK?"</td><td>Yes</td></tr>
+    <tr><td>4</td><td>Before execution</td><td>"Here's the plan. Proceed?"</td><td>Yes</td></tr>
+    <tr><td>5</td><td>After quality checks</td><td>"Quality passed. Load to database?"</td><td>Yes</td></tr>
+    <tr><td>6</td><td>After loading</td><td>"Verified. Run analytics?"</td><td>No</td></tr>
+    <tr><td>7</td><td>After execution</td><td>"Save script? Airflow DAG?"</td><td>Yes</td></tr>
+    <tr><td>8</td><td>After saving</td><td>"Push to GitHub?"</td><td>Yes</td></tr>
+</table>
+
+<div class="note">Required checkpoints block the next stage until the user responds. The skill never assumes — it always asks.</div>
+
+<!-- ============================================================ -->
+<h2>Git Tracking</h2>
+
+<p>When the user opts in to Git, the skill creates commits with descriptive messages:</p>
+
+<pre>
+commit a1b2c3d
+Author: sindhuh
+Date:   Mon Mar 16 18:15:00 2026
+
+    feat: ETL pipeline kc_house_data → PostgreSQL
+
+    - Source: kc_house_data.csv (21,613 rows × 21 columns)
+    - Target: localhost:5432/kaggle_data.kc_house_data
+    - Transforms: column normalization, date parsing, type optimization
+    - Quality: 3/4 checks passed (0 failures)
+    - Execution time: 6.7s
+</pre>
+
+<h3>What gets committed</h3>
+<table>
+    <tr><th>File</th><th>Purpose</th></tr>
+    <tr><td><code>scripts/etl_*.py</code></td><td>Reusable pipeline script</td></tr>
+    <tr><td><code>reports/*.html</code></td><td>Quality and execution reports</td></tr>
+    <tr><td><code>config/*.yaml</code></td><td>Pipeline configuration</td></tr>
+    <tr><td><code>dags/*.py</code></td><td>Airflow DAG (if created)</td></tr>
+</table>
+
+<h3>What does NOT get committed</h3>
+<table>
+    <tr><th>File</th><th>Why</th></tr>
+    <tr><td><code>data/*.csv</code></td><td>Raw data — too large, may contain sensitive info</td></tr>
+    <tr><td><code>logs/*.log</code></td><td>Execution logs — ephemeral</td></tr>
+    <tr><td>Database credentials</td><td>Security — passed via CLI args or env vars</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>Output</h2>
+
+<p>After a complete run, you'll have:</p>
+
+<pre>
+workspace/
+├── etl-pipeline/
+│   ├── scripts/
+│   │   └── etl_kc_house_data_to_postgres.py    ← reusable script
+│   ├── data/
+│   │   └── kc_house_data.csv                   ← extracted data
+│   ├── logs/
+│   │   └── pipeline.log                        ← execution log
+│   └── config/
+│       └── pipeline_config.yaml                ← configuration
+│
+├── reports/
+│   ├── kc_house_data_quality_report_20260316.html   ← quality report
+│   ├── kc_house_data_quality_report_20260316.json   ← machine-readable
+│   └── etl_pipeline_report_20260316.html            ← execution report
+│
+└── PostgreSQL
+    └── kaggle_data.kc_house_data               ← 21,613 rows loaded
+</pre>
+
+<h3>Re-running the pipeline</h3>
+<p>The saved script supports command-line arguments:</p>
+<pre>
+python3 etl_kc_house_data_to_postgres.py \
+  --dataset /path/to/new_data.csv \
+  --table kc_house_data \
+  --database kaggle_data \
+  --user postgres \
+  --password password
+</pre>
+
+<p>Run <code>python3 etl_kc_house_data_to_postgres.py --help</code> to see all options.</p>
+
+<!-- ============================================================ -->
+<h2>Supported Sources & Destinations</h2>
+
+<h3>Sources</h3>
+<table>
+    <tr><th>Type</th><th>Formats</th></tr>
+    <tr><td>Local files</td><td>CSV, JSON, Parquet, Excel, ZIP</td></tr>
+    <tr><td>Databases</td><td>PostgreSQL, MySQL, SQLite</td></tr>
+    <tr><td>APIs</td><td>REST endpoints (GET with pagination)</td></tr>
+    <tr><td>Kaggle</td><td>Any dataset via <code>kaggle</code> CLI</td></tr>
+</table>
+
+<h3>Destinations</h3>
+<table>
+    <tr><th>Type</th><th>Connection</th></tr>
+    <tr><td>PostgreSQL</td><td><code>postgresql://user:pass@host:port/db</code></td></tr>
+    <tr><td>MySQL</td><td><code>mysql+pymysql://user:pass@host:port/db</code></td></tr>
+    <tr><td>SQLite</td><td><code>sqlite:///path/to/db.sqlite</code></td></tr>
+    <tr><td>Clean file</td><td>CSV or Parquet output</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>Comparison with senior-data-engineer</h2>
+
+<table>
+    <tr><th>Feature</th><th>senior-data-engineer</th><th>data-engineering</th></tr>
+    <tr><td>Mode</td><td>Reference material</td><td>Interactive builder</td></tr>
+    <tr><td>Who drives</td><td>You ask, it answers</td><td>It asks, you answer</td></tr>
+    <tr><td>Output</td><td>Code snippets to copy</td><td>Working pipeline + reports</td></tr>
+    <tr><td>Execution</td><td>You run it manually</td><td>Runs automatically</td></tr>
+    <tr><td>Quality checks</td><td>Templates provided</td><td>Built-in, runs every time</td></tr>
+    <tr><td>Git integration</td><td>Not included</td><td>Commit + push to GitHub</td></tr>
+    <tr><td>Checkpoints</td><td>None</td><td>8 confirmation points</td></tr>
+</table>
+
+<div class="footer">
+    Data Engineering Skill v1.0.0 — OpenClaw — March 2026
+</div>
+
+</body>
+</html>

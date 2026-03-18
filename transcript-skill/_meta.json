@@ -1,0 +1,17 @@
+{
+  "name": "transcript-skill",
+  "version": "1.0.0",
+  "description": "Transcribe YouTube videos or local video/audio files using Whisper, then summarize the content. Use when user says: transcribe, transcript, get transcript, summarize this video, what does this video say, YouTube link for transcription, or uploads a video/audio file.",
+  "triggers": [
+    "transcript",
+    "transcribe",
+    "transcription",
+    "get transcript",
+    "summarize this video",
+    "summarize video",
+    "what does this video say",
+    "youtube transcript",
+    "video summary",
+    "audio transcript"
+  ]
+}

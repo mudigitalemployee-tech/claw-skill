@@ -1,0 +1,5 @@
+{
+  "name": "data-engineering",
+  "version": "1.0.0",
+  "description": "Interactive data engineering skill that builds ETL/ELT pipelines through guided conversation."
+}
