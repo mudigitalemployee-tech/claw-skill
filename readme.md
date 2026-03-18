@@ -8,9 +8,21 @@ A curated collection of OpenClaw skills for the Digital Employee platform. Each 
 
 | # | Skill | Directory | Description |
 |---|-------|-----------|-------------|
-| 1 | **MuSigma HTML Report Generator** | `report_generatror/` | Generate structured, interactive HTML analytics reports using the MuSigma canonical template. Supports EDA summaries, business analytics, decision science reports, and dataset-based insights. |
-| 2 | **Connected Insights** | `connected-insights/` | CXO-grade insight engine that analyses dashboards, reports, and datasets to produce prescriptive, business-standard findings using the framework: *What Happened → Why It Happened → What Should We Do → What We'll Achieve*. |
-| 3 | **AutoTest Engineer** | `autotest-engineer/` | Automated testing skill — analyzes a project, detects language/framework, generates unit/integration/edge-case tests, executes them, optionally runs SonarQube analysis, and produces a structured HTML report. |
+| 1 | **AutoTest Engineer** | `autotest-engineer/` | Automated testing skill that analyzes projects, generates tests, runs them, and produces structured QA reports. |
+| 2 | **Connected Insights** | `connected-insights/` | CXO-grade insight engine for dashboards, reports, and datasets with prescriptive business recommendations. |
+| 3 | **Data Engineering** | `data-engineering/` | Interactive ETL/ELT pipeline builder for ingestion, transformation, validation, and deployment workflows. |
+| 4 | **Data Science (Master)** | `data-science/` | End-to-end tabular analytics pipeline orchestrator for EDA, modeling, forecasting, and report generation. |
+| 5 | **Data Science Phase 1 - EDA** | `data-science/phase1-eda/` | Phase module focused on exploratory data analysis, profiling, and insight extraction. |
+| 6 | **Data Science Phase 2 - Modeling** | `data-science/phase2-modeling/` | Phase module for feature engineering, model training, evaluation, and selection. |
+| 7 | **Data Science Phase 3 - Execution** | `data-science/phase3-execution/` | Phase module for final execution outputs, business interpretation, and report-ready packaging. |
+| 8 | **Enterprise Arch HTML** | `enterprise-arch-html/` | Generates polished, self-contained enterprise architecture HTML pages and decision artifacts. |
+| 9 | **FullStack App Builder** | `fullstack-app-builder/` | Scaffolds full-stack web apps (frontend + backend) from requirements or datasets. |
+| 10 | **GitHub Manager** | `github-manager/` | Handles Git/GitHub workflows including commits, branches, PRs, repo updates, and issue-driven work. |
+| 11 | **Problem Definition** | `problem-definition/` | Produces muAoPS-style structured problem definitions with retrieval-backed synthesis workflows. |
+| 12 | **MuSigma HTML Report Generator** | `report_generatror/` | Builds structured, interactive HTML analytics reports using the MuSigma canonical template. |
+| 13 | **SDLC Planning** | `sdlc-planning/` | Creates milestone-driven SDLC plans and implementation roadmaps before build execution. |
+| 14 | **Tavily Search** | `tavily-search/` | Performs web search and URL content extraction with recency and domain controls. |
+| 15 | **Transcript Skill** | `transcript-skill/` | Transcribes and summarizes video/audio from URLs, embedded players, and local media files. |
 
 ---
 
